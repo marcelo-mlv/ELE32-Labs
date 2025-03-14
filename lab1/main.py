@@ -1,5 +1,5 @@
-from BSC import BSC
-from encoder import Encoder
+from BinarySymmetricChannel import BinarySymmetricChannel as BSC
+from Encoder import Encoder
 import matplotlib.pyplot as plt
 
 import random
