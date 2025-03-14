@@ -10,11 +10,12 @@ encoder = Encoder()
 p_values = np.logspace(-5, np.log10(0.5), 20)
 pb_values = p_values.copy()
 
-random_bits = [random.randint(0, 1) for _ in range(1000000)]
+sample_size = 1000000
+random_bits = [random.randint(0, 1) for _ in range(sample_size)]
 
 for k in range(p_values.size):
 
-    number_of_errors = 0
+    flipped_bits = 0
 
     for i in range(0, len(random_bits), 4):
 
@@ -22,7 +23,7 @@ for k in range(p_values.size):
             
         v = encoder.encode(u)
 
-        r = BSC(v, p_values[k])
+        r = BSC.transmit(v, p_values[k])
 
         v_hat = encoder.decode(r)
 
@@ -30,9 +31,9 @@ for k in range(p_values.size):
 
         for j in range(4):
             if u[j] != u_hat[j]:
-                number_of_errors += 1
+                flipped_bits += 1
 
-    pb = number_of_errors / 1000000
+    pb = flipped_bits / sample_size
     pb_values[k] = pb
 
 plt.figure()
