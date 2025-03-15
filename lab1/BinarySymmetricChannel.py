@@ -1,6 +1,12 @@
 import numpy as np
 
 class BinarySymmetricChannel:
+    """Simulates data transmission through a binary symmetric channel.
+
+    Typical usage example:
+
+    transmitted_data = channel.transmit(encoded_data)
+    """
 
     def transmit(input_bits, p):
         output_bits = []

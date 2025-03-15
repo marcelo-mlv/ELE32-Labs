@@ -20,4 +20,4 @@ Será publicado nesse repositório:
 
 📕 ***ELE-32***: Introdução a Telecomunicações
 
-💻 ***Python***, majoritariamente
+💻 ***Python***, com [documentação padrão do Google](https://github.com/google/styleguide/blob/gh-pages/pyguide.md)

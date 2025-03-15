@@ -1,6 +1,19 @@
 import numpy as np
 
 class Encoder:
+    """Receives an information, encodes it, transmits it through a channel and decodes it in an attempt to retrieve the original information.
+
+    It also uses a generator matrix G and a parity-check matrix H to encode and decode the information.
+
+    Typical usage example:
+
+    encoder = Encoder()
+    encoded_data = encoder.encode(raw_data)
+    transmitted_data = channel.transmit(encoded_data)
+    encoded_data_hat = encoder.decode(transmitted_data)
+    raw_data = encoded_data_hat[:4]
+    """
+
     def __init__(self):
         self.G = np.array([
             [1, 0, 0, 0, 1, 1, 1],
