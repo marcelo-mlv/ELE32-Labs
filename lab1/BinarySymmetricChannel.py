@@ -1,14 +1,24 @@
 import numpy as np
 
 class BinarySymmetricChannel:
-    """Simulates data transmission through a binary symmetric channel.
+    """Simulates data transmission through a Binary Symmetric Channel (BSC).
 
     Typical usage example:
 
     transmitted_data = channel.transmit(encoded_data)
     """
 
-    def transmit(input_bits, p):
+    def transmit(self, input_bits, p):
+        """
+        Simulates the transmission of bits through a BSC.
+
+        Params:
+            input_bits (list): List of bits to be transmitted.
+            p (float): Probability of a bit being flipped during transmission.
+
+        Returns:
+            output_bits (list): List of bits after transmission through the channel.
+        """
         output_bits = []
         for bit in input_bits:
             if np.random.rand() < p:

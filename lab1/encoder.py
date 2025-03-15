@@ -15,6 +15,9 @@ class Encoder:
     """
 
     def __init__(self):
+        """
+        Initializes the Encoder with generator matrix G and parity-check matrix H based on Hamming(7, 4) code
+        """
         self.G = np.array([
             [1, 0, 0, 0, 1, 1, 1],
             [0, 1, 0, 0, 1, 0, 1],
@@ -28,13 +31,42 @@ class Encoder:
         ])
 
     def encode(self, u):
+        """
+        Encodes an input message using the generator matrix.
+
+        Params:
+            u (list):List of bits to be encoded.
+
+        Returns:
+            v (list): Encoded list of bits.
+        """
         v = np.dot(u, self.G) % 2
         return v
     
     def getSyndrome(self, r):
+        """
+        Computes the syndrome of a list of bits using the parity-check matrix H.
+
+        Params:
+            r (list): List of bits received.
+
+        Returns:
+            s (list): Syndrome of the received message
+        """
         return np.dot(r, self.H.T) % 2
 
     def getError(self, r):
+        """
+        Determines the most likely error pattern in the received message r.
+
+        Params:
+        r (list):
+            Received list of bits.
+
+        Returns:
+        e (list):
+            Most likely error pattern based on the syndrome.
+        """
         s = self.getSyndrome(r)
         e = np.zeros(7)
         if np.all(s == 0):
@@ -45,5 +77,15 @@ class Encoder:
                 return e
 
     def decode(self, r):
+        """
+        Decodes the received message r by correcting the errors
+
+        Params:
+            r (list): Received message
+
+        Returns:
+            v_hat(list): Decoded message
+        """
         e = self.getError(r)
-        return r + e % 2
+        v_hat = r + e % 2
+        return v_hat
