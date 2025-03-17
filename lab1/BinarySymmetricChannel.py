@@ -9,7 +9,7 @@ class BinarySymmetricChannel(Channel):
     transmitted_data = channel.transmit(encoded_data)
     """
 
-    def transmit(self, input_bits, p):
+    def transmit(self, input_bits, p, *args, **kwargs):
         """
         Simulates the transmission of bits through a BSC.
 

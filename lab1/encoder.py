@@ -25,12 +25,12 @@ class Encoder:
             [0, 0, 0, 1, 0, 1, 1]
         ])
 
-    def encode(self, u):
+    def encode(self, u, *args, **kwargs):
         """
         Encodes an input message using the generator matrix.
 
         Params:
-            u (list):List of bits to be encoded.
+            u (list): List of bits to be encoded.
 
         Returns:
             v (list): Encoded list of bits.

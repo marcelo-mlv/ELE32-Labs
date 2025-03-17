@@ -1,17 +1,13 @@
 class Channel:
-    def transmit(self, data):
+    def transmit(self, *args, **kwargs):
         pass
 
 class Encoder:
-    def encode(self, data):
+    def encode(self, *args, **kwargs):
         pass
 
 class Decoder:
-    def decode(self, data):
-        pass
-
-class BinarySymmetricChannel(Channel):
-    def transmit(self, data, p):
+    def decode(self, *args, **kwargs):
         pass
 
 class System:
