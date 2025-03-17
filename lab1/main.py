@@ -1,6 +1,7 @@
-from modules.Encoder import HammingEncoder
-from modules.Decoder import HammingDecoder
+from modules.HammingEncoder import HammingEncoder
+from modules.HammingDecoder import HammingDecoder
 from modules.BinarySymmetricChannel import BinarySymmetricChannel
+from modules.System import System
 
 import random
 import numpy as np

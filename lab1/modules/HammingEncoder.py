@@ -1,7 +1,10 @@
 import numpy as np
 
-class HammingEncoder:
-    """Receives an information, encodes it, transmits it through a channel and decodes it in an attempt to retrieve the original information.
+from modules.System import Encoder
+
+class HammingEncoder(Encoder):
+    """
+    Receives an information, encodes it, transmits it through a channel and decodes it in an attempt to retrieve the original information.
 
     It also uses a generator matrix G and a parity-check matrix H to encode and decode the information.
 

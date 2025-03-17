@@ -1,6 +1,8 @@
 import numpy as np
 
-class HammingDecoder:
+from modules.System import Decoder
+
+class HammingDecoder(Decoder):
     """
     Decodes the received message by correcting the errors using a parity-check matrix H.
 
