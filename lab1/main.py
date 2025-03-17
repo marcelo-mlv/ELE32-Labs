@@ -1,4 +1,4 @@
-from Encoder import Encoder
+from encoder import Encoder, Decoder
 from BinarySymmetricChannel import BinarySymmetricChannel as BSC
 
 import random
@@ -6,12 +6,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 encoder = Encoder()
+decoder = Decoder()
 bsc = BSC()
 
 p_values = np.logspace(-5, np.log10(0.5), 20) # Probability of a bit being flipped during transmission
 pb_values = p_values.copy() # Bit error probability
 
-sample_size = 1000000
+sample_size = 1000
 random_bits = [random.randint(0, 1) for _ in range(sample_size)]
 
 for k in range(p_values.size):
@@ -25,7 +26,7 @@ for k in range(p_values.size):
         u = random_bits[i:i+4]
         v = encoder.encode(u)
         r = bsc.transmit(v, p_values[k])
-        v_hat = encoder.decode(r)
+        v_hat = decoder.decode(r)
         u_hat = v_hat[:4]
 
         for j in range(4):

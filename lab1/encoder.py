@@ -16,18 +16,13 @@ class Encoder:
 
     def __init__(self):
         """
-        Initializes the Encoder with generator matrix G and parity-check matrix H based on Hamming(7, 4) code
+        Initializes the Encoder with generator matrix G based on Hamming(7, 4) code
         """
         self.G = np.array([
             [1, 0, 0, 0, 1, 1, 1],
             [0, 1, 0, 0, 1, 0, 1],
             [0, 0, 1, 0, 1, 1, 0],
             [0, 0, 0, 1, 0, 1, 1]
-        ])
-        self.H = np.array([
-            [1, 1, 1, 0, 1, 0, 0],
-            [1, 0, 1, 1, 0, 1, 0],
-            [1, 1, 0, 1, 0, 0, 1]
         ])
 
     def encode(self, u):
@@ -42,7 +37,27 @@ class Encoder:
         """
         v = np.dot(u, self.G) % 2
         return v
-    
+
+class Decoder:
+    """
+    Decodes the received message by correcting the errors using a parity-check matrix H.
+
+    Typical usage example:
+
+    decoder = Decoder()
+    decoded_data = decoder.decode(received_data)
+    """
+
+    def __init__(self):
+        """
+        Initializes the Decoder with parity-check matrix H based on Hamming(7, 4) code
+        """
+        self.H = np.array([
+            [1, 1, 1, 0, 1, 0, 0],
+            [1, 0, 1, 1, 0, 1, 0],
+            [1, 1, 0, 1, 0, 0, 1]
+        ])
+
     def getSyndrome(self, r):
         """
         Computes the syndrome of a list of bits using the parity-check matrix H.

@@ -1,6 +1,7 @@
 import numpy as np
+from System import Channel
 
-class BinarySymmetricChannel:
+class BinarySymmetricChannel(Channel):
     """Simulates data transmission through a Binary Symmetric Channel (BSC).
 
     Typical usage example:
