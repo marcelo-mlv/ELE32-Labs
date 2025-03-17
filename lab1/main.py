@@ -1,18 +1,19 @@
-from encoder import Encoder, Decoder
-from BinarySymmetricChannel import BinarySymmetricChannel as BSC
+from Encoder import HammingEncoder
+from Decoder import HammingDecoder
+from BinarySymmetricChannel import BinarySymmetricChannel
 
 import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-encoder = Encoder()
-decoder = Decoder()
-bsc = BSC()
+encoder = HammingEncoder()
+decoder = HammingDecoder()
+bsc = BinarySymmetricChannel()
 
 p_values = np.logspace(-5, np.log10(0.5), 20) # Probability of a bit being flipped during transmission
 pb_values = p_values.copy() # Bit error probability
 
-sample_size = 1000
+sample_size = 10000
 random_bits = [random.randint(0, 1) for _ in range(sample_size)]
 
 for k in range(p_values.size):
