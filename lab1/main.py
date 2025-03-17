@@ -11,6 +11,8 @@ encoder = HammingEncoder()
 decoder = HammingDecoder()
 bsc = BinarySymmetricChannel()
 
+system = System(encoder, decoder, bsc)
+
 p_values = np.logspace(-5, np.log10(0.5), 20) # Probability of a bit being flipped during transmission
 pb_values = p_values.copy() # Bit error probability
 
@@ -26,9 +28,7 @@ for k in range(p_values.size):
 
     for i in range(0, len(random_bits), 4):
         u = random_bits[i:i+4]
-        v = encoder.encode(u)
-        r = bsc.transmit(v, p_values[k])
-        v_hat = decoder.decode(r)
+        v_hat = system.process(u, p_values[k])
         u_hat = v_hat[:4]
 
         for j in range(4):

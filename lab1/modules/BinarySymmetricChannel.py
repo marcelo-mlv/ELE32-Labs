@@ -1,6 +1,6 @@
 import numpy as np
 
-from System import Channel
+from modules.System import Channel
 
 class BinarySymmetricChannel(Channel):
     """
