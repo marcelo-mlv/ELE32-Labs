@@ -37,8 +37,8 @@ class System:
         Initializes the System with an encoder, a decoder, and a channel.
 
         Params:
-            encoder (Encoder): The encoder to be used in the system.
-            decoder (Decoder): The decoder to be used in the system.
+            encoder (Encoder or None): The encoder to be used in the system.
+            decoder (Decoder or None): The decoder to be used in the system.
             channel (Channel): The channel to be used in the system.
         """
         self.encoder = encoder
@@ -54,9 +54,11 @@ class System:
             p (float): The probability of a bit being flipped during transmission.
 
         Returns:
-            decoded_data (list): The decoded data after transmission through the channel.
+            processed_data (list): The processed data after transmission through the channel.
         """
-        encoded_data = self.encoder.encode(data)
-        transmitted_data = self.channel.transmit(encoded_data, p)
-        decoded_data = self.decoder.decode(transmitted_data)
-        return decoded_data
+        if self.encoder:
+            data = self.encoder.encode(data)
+        data = self.channel.transmit(data, p)
+        if self.decoder:
+            data = self.decoder.decode(data)
+        return data

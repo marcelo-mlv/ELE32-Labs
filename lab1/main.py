@@ -7,16 +7,20 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-encoder = HammingEncoder()
-decoder = HammingDecoder()
+# System declaration
+
+hamming_encoder = HammingEncoder()
+hamming_decoder = HammingDecoder()
 bsc = BinarySymmetricChannel()
 
-system = System(encoder, decoder, bsc)
+hamming_system = System(hamming_encoder, hamming_decoder, bsc)
+channel_only = System(None, None, bsc)
 
 n_iterations = 16
 
 p_values = np.logspace(-5, np.log10(0.5), n_iterations) # Probability of a bit being flipped during transmission
-pb_values = np.zeros(p_values.size) # System bit error probability
+hamming_pb_values = np.zeros(p_values.size) # System bit error probability (hamming)
+co_pb_values = np.zeros(p_values.size) # System bit error probability (channel only)
 
 sample_size = np.logspace(2, 6, p_values.size, dtype=int)[::-1]
 
@@ -26,25 +30,41 @@ for k in range(p_values.size):
     and calculates the bit error probability for different values of p.
     """
 
-    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
     print(f"Iteration no. {k+1}")
     
     random_bits = [random.randint(0, 1) for _ in range(sample_size[k] - sample_size[k]%4)]
-    flipped_bits = 0
+    
+    flipped_bits = {"bsc": 0, "hamming": 0}
+
+    # BSC Channel only
+    channel_bits = channel_only.process(random_bits.copy(), p_values[k])
+
+    for j in range(len(random_bits)):
+        if random_bits[j] != channel_bits[j]:
+            flipped_bits["bsc"] += 1
+    
+    co_pb_values[k] = flipped_bits["bsc"] / sample_size[k]
+
+    print(f"\tCHANNEL ONLY: pb = {co_pb_values[k]}; p = {p_values[k]}")
 
     for i in range(0, len(random_bits), 4):
+
         u = random_bits[i:i+4]
-        v_hat = system.process(u, p_values[k])
+        
+
+        # Hamming encoding and decoding
+        v_hat = hamming_system.process(u.copy(), p_values[k])
         u_hat = v_hat[:4]
 
         for j in range(len(u)):
             if u[j] != u_hat[j]:
-                flipped_bits += 1
+                flipped_bits["hamming"] += 1
 
-    pb_values[k] = flipped_bits / sample_size[k]
+    hamming_pb_values[k] = flipped_bits["hamming"] / sample_size[k]
 
-    print(f"HAMMING: pb = {pb_values[k]}; p = {p_values[k]}")
-    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+    print(f"\tHAMMING: pb = {hamming_pb_values[k]}; p = {p_values[k]}")
+    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 
 """
 Plots the bit error probability as a function of the probability of a bit being flipped during transmission.
@@ -52,12 +72,14 @@ Plots the bit error probability as a function of the probability of a bit being 
     y axis: pb_values (list), in logarithmic scale
 """
 plt.figure()
-plt.plot(p_values, pb_values, marker='o')
+plt.plot(p_values, hamming_pb_values, marker='o', label='Hamming')
+plt.plot(p_values, co_pb_values, marker='x', label='Somente Canal')
 plt.xscale('log')
 plt.yscale('log')
 plt.xlabel('P')
 plt.ylabel('Pb')
 plt.title("Prob. inversão de bit pós decodificação x prob. inversão de bit no canal")
 plt.grid(True)
+plt.legend()
 plt.gca().invert_xaxis()
 plt.show()
