@@ -13,16 +13,22 @@ bsc = BinarySymmetricChannel()
 
 system = System(encoder, decoder, bsc)
 
-p_values = np.logspace(-5, np.log10(0.5), 10) # Probability of a bit being flipped during transmission
-pb_values = p_values.copy() # System bit error probability
+n_iterations = 16
 
-sample_size = np.logspace(3, 7, p_values.size, dtype=int)[::-1]
+p_values = np.logspace(-5, np.log10(0.5), n_iterations) # Probability of a bit being flipped during transmission
+pb_values = np.zeros(p_values.size) # System bit error probability
+
+sample_size = np.logspace(2, 6, p_values.size, dtype=int)[::-1]
 
 for k in range(p_values.size):
     """
     Simulates the transmission of random bits through a binary symmetric channel
     and calculates the bit error probability for different values of p.
     """
+
+    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+    print(f"Iteration no. {k+1}")
+    
     random_bits = [random.randint(0, 1) for _ in range(sample_size[k] - sample_size[k]%4)]
     flipped_bits = 0
 
@@ -31,12 +37,14 @@ for k in range(p_values.size):
         v_hat = system.process(u, p_values[k])
         u_hat = v_hat[:4]
 
-        for j in range(4):
+        for j in range(len(u)):
             if u[j] != u_hat[j]:
                 flipped_bits += 1
 
-    pb = flipped_bits / sample_size[k]
-    pb_values[k] = pb
+    pb_values[k] = flipped_bits / sample_size[k]
+
+    print(f"HAMMING: pb = {pb_values[k]}; p = {p_values[k]}")
+    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
 
 """
 Plots the bit error probability as a function of the probability of a bit being flipped during transmission.
