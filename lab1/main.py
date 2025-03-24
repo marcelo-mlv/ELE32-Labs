@@ -13,17 +13,17 @@ bsc = BinarySymmetricChannel()
 
 system = System(encoder, decoder, bsc)
 
-p_values = np.logspace(-5, np.log10(0.5), 20) # Probability of a bit being flipped during transmission
-pb_values = p_values.copy() # Bit error probability
+p_values = np.logspace(-5, np.log10(0.5), 10) # Probability of a bit being flipped during transmission
+pb_values = p_values.copy() # System bit error probability
 
-sample_size = 10000
-random_bits = [random.randint(0, 1) for _ in range(sample_size)]
+sample_size = np.logspace(3, 7, p_values.size, dtype=int)[::-1]
 
 for k in range(p_values.size):
     """
     Simulates the transmission of random bits through a binary symmetric channel
     and calculates the bit error probability for different values of p.
     """
+    random_bits = [random.randint(0, 1) for _ in range(sample_size[k] - sample_size[k]%4)]
     flipped_bits = 0
 
     for i in range(0, len(random_bits), 4):
@@ -35,7 +35,7 @@ for k in range(p_values.size):
             if u[j] != u_hat[j]:
                 flipped_bits += 1
 
-    pb = flipped_bits / sample_size
+    pb = flipped_bits / sample_size[k]
     pb_values[k] = pb
 
 """
