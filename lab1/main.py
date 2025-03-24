@@ -23,11 +23,15 @@ hamming_pb_values = np.zeros(p_values.size) # System bit error probability (hamm
 co_pb_values = np.zeros(p_values.size) # System bit error probability (channel only)
 
 sample_size = np.logspace(2, 6, p_values.size, dtype=int)[::-1]
+print(sample_size)
 
 for k in range(p_values.size):
     """
-    Simulates the transmission of random bits through a binary symmetric channel
+    Simulates the transmission of random bits through 2 systems
     and calculates the bit error probability for different values of p.
+        System 1: Channel Only
+        System 2: Hamming Encoding and Decoding
+    Both systems use BSC as channel.
     """
 
     print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
@@ -37,17 +41,16 @@ for k in range(p_values.size):
     
     flipped_bits = {"bsc": 0, "hamming": 0}
 
-    # BSC Channel only
+    # System 1
     channel_bits = channel_only.process(random_bits.copy(), p_values[k])
 
     for j in range(len(random_bits)):
         if random_bits[j] != channel_bits[j]:
-            flipped_bits["bsc"] += 1
+            flipped_bits["System 1"] += 1
     
-    co_pb_values[k] = flipped_bits["bsc"] / sample_size[k]
+    co_pb_values[k] = flipped_bits["System 1"] / len(random_bits)
 
-    print(f"\tCHANNEL ONLY: pb = {co_pb_values[k]}; p = {p_values[k]}")
-
+    # System 2
     for i in range(0, len(random_bits), 4):
 
         u = random_bits[i:i+4]
@@ -61,10 +64,14 @@ for k in range(p_values.size):
             if u[j] != u_hat[j]:
                 flipped_bits["hamming"] += 1
 
-    hamming_pb_values[k] = flipped_bits["hamming"] / sample_size[k]
+    hamming_pb_values[k] = flipped_bits["System 2"] / len(random_bits)
 
-    print(f"\tHAMMING: pb = {hamming_pb_values[k]}; p = {p_values[k]}")
-    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
+    print(f"Iteration no. {k+1}")
+    print(f"Sample size: {sample_size[k]}")
+    print(f"p: {p_values[k]}")
+    print(f"\tCHANNEL ONLY: pb = {co_pb_values[k]:.7f}")
+    print(f"\tHAMMING:      pb = {hamming_pb_values[k]:.7f}")
 
 """
 Plots the bit error probability as a function of the probability of a bit being flipped during transmission.
