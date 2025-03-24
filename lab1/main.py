@@ -33,13 +33,10 @@ for k in range(p_values.size):
         System 2: Hamming Encoding and Decoding
     Both systems use BSC as channel.
     """
-
-    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
-    print(f"Iteration no. {k+1}")
     
     random_bits = [random.randint(0, 1) for _ in range(sample_size[k] - sample_size[k]%4)]
     
-    flipped_bits = {"bsc": 0, "hamming": 0}
+    flipped_bits = {"System 1": 0, "System 2": 0}
 
     # System 1
     channel_bits = channel_only.process(random_bits.copy(), p_values[k])
@@ -54,15 +51,13 @@ for k in range(p_values.size):
     for i in range(0, len(random_bits), 4):
 
         u = random_bits[i:i+4]
-        
-
-        # Hamming encoding and decoding
+    
         v_hat = hamming_system.process(u.copy(), p_values[k])
         u_hat = v_hat[:4]
 
         for j in range(len(u)):
             if u[j] != u_hat[j]:
-                flipped_bits["hamming"] += 1
+                flipped_bits["System 2"] += 1
 
     hamming_pb_values[k] = flipped_bits["System 2"] / len(random_bits)
 
