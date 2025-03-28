@@ -16,13 +16,13 @@ bsc = BinarySymmetricChannel()
 hamming_system = System(hamming_encoder, hamming_decoder, bsc)
 channel_only = System(None, None, bsc)
 
-n_iterations = 16
+n_iterations = 20
 
 p_values = np.logspace(-5, np.log10(0.5), n_iterations) # Probability of a bit being flipped during transmission
 hamming_pb_values = np.zeros(p_values.size) # System bit error probability (hamming)
 co_pb_values = np.zeros(p_values.size) # System bit error probability (channel only)
 
-sample_size = np.logspace(2, 6, p_values.size, dtype=int)[::-1]
+sample_size = np.logspace(5, 6, p_values.size, dtype=int)[::-1]
 print(sample_size)
 
 for k in range(p_values.size):
@@ -84,4 +84,8 @@ plt.title("Prob. inversão de bit pós decodificação x prob. inversão de bit 
 plt.grid(True)
 plt.legend()
 plt.gca().invert_xaxis()
+
+# Save the plot as a PNG file
+plt.savefig("plot.png", format="png")
+
 plt.show()
