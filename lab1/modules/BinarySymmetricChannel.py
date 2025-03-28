@@ -28,4 +28,4 @@ class BinarySymmetricChannel(Channel):
                 output_bits.append(1 - bit)
             else:
                 output_bits.append(bit)
-        return output_bits
+        return np.array(output_bits, dtype=int)
