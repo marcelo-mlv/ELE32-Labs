@@ -66,5 +66,5 @@ class HammingDecoder(Decoder):
             v_hat(list): Decoded message
         """
         e = self.getError(r)
-        v_hat = r + e % 2
+        v_hat = (r + e) % 2
         return v_hat
