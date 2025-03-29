@@ -125,12 +125,11 @@ class MyDecoder(Decoder):
         """
         s = self.getSyndrome(r)
         e = np.zeros(9, dtype=int)
-        if np.all(s == 0):
-            return e
         for i in range(0, len(self.H.T)):
             if np.all(s == self.H.T[i]):
                 e[i] = 1 - e[i]
                 return e
+        return e
 
     def decode(self, r, *args, **kwargs):
         """
