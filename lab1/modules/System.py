@@ -1,32 +1,3 @@
-class Channel:
-    """
-    Represents a communication channel through which data is transmitted.
-    """
-    def transmit(self, *args, **kwargs):
-        """
-        Simulates the transmission of data through the channel.
-        """
-        pass
-
-class Encoder:
-    """
-    Represents an encoder that encodes data before transmission.
-    """
-    def encode(self, *args, **kwargs):
-        """
-        Encodes the input data.
-        """
-        pass
-
-class Decoder:
-    """
-    Represents a decoder that decodes received data.
-    """
-    def decode(self, *args, **kwargs):
-        """
-        Decodes the received data.
-        """
-        pass
 
 class System:
     """

@@ -1,6 +1,14 @@
 import numpy as np
 
-from modules.System import Decoder
+class Decoder:
+    """
+    Represents a decoder that decodes received data.
+    """
+    def decode(self, *args, **kwargs):
+        """
+        Decodes the received data.
+        """
+        pass
 
 class HammingDecoder(Decoder):
     """

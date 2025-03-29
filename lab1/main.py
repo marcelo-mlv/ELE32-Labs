@@ -1,6 +1,6 @@
-from modules.HammingEncoder import HammingEncoder
-from modules.HammingDecoder import HammingDecoder
-from modules.BinarySymmetricChannel import BinarySymmetricChannel
+from modules.Encoder import HammingEncoder
+from modules.Decoder import HammingDecoder
+from modules.Channel import BinarySymmetricChannel
 from modules.System import System
 
 import random
@@ -13,8 +13,8 @@ hamming_encoder = HammingEncoder()
 hamming_decoder = HammingDecoder()
 bsc = BinarySymmetricChannel()
 
-hamming_system = System(hamming_encoder, hamming_decoder, bsc)
 channel_only = System(None, None, bsc)
+hamming_system = System(hamming_encoder, hamming_decoder, bsc)
 
 n_iterations = 20
 

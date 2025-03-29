@@ -1,6 +1,14 @@
 import numpy as np
 
-from modules.System import Channel
+class Channel:
+    """
+    Represents a communication channel through which data is transmitted.
+    """
+    def transmit(self, *args, **kwargs):
+        """
+        Simulates the transmission of data through the channel.
+        """
+        pass
 
 class BinarySymmetricChannel(Channel):
     """

@@ -1,6 +1,14 @@
 import numpy as np
 
-from modules.System import Encoder
+class Encoder:
+    """
+    Represents an encoder that encodes data before transmission.
+    """
+    def encode(self, *args, **kwargs):
+        """
+        Encodes the input data.
+        """
+        pass
 
 class HammingEncoder(Encoder):
     """
