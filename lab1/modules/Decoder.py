@@ -40,7 +40,7 @@ class HammingDecoder(Decoder):
         Returns:
             s (list): Syndrome of the received message
         """
-        return np.dot(r, self.H.T) % 2
+        return (np.dot(r, self.H.T) % 2).astype(int)
 
     def getError(self, r):
         """
@@ -55,7 +55,7 @@ class HammingDecoder(Decoder):
             Most likely error pattern based on the syndrome.
         """
         s = self.getSyndrome(r)
-        e = np.zeros(7)
+        e = np.zeros(7, dtype=int)
         if np.all(s == 0):
             return e
         for i in range(0, len(self.H.T)):
@@ -75,4 +75,4 @@ class HammingDecoder(Decoder):
         """
         e = self.getError(r)
         v_hat = (r + e) % 2
-        return v_hat
+        return v_hat.astype(int)

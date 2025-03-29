@@ -47,4 +47,4 @@ class HammingEncoder(Encoder):
             v (list): Encoded list of bits.
         """
         v = np.dot(u, self.G) % 2
-        return v
+        return v.astype(int)
