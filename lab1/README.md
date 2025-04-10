@@ -4,13 +4,15 @@ Este repositório contém os arquivos para a prática de laboratório da discipl
 
 ## Descrição
 
-Neste laboratório, implementamos um canal binário simétrico (BSC) e um codificador/decodificador para simular a transmissão de bits através de um canal ruidoso. O objetivo é estudar o comportamento do canal e a eficácia do código de correção de erros.
+Neste laboratório, implementamos um canal binário simétrico (BSC) e codificadores/decodificadores para simular a transmissão de bits através de um canal ruidoso. O objetivo é estudar o comportamento do canal e a eficácia do código de correção de erros.
 
 ## Arquivos
 
 - `main.py`: Script principal que executa a simulação.
-- `encoder.py`: Implementação do codificador e do decodificador.
-- `BinarySymmetricChannel.py`: Implementação de um *Binary Symmetric Channel* (Canal Binário Simétrico).
+- `modules/Encoder.py`: Implementação de codificadores (Hamming e personalizado).
+- `modules/Decoder.py`: Implementação de decodificadores (Hamming e personalizado).
+- `modules/Channel.py`: Implementação de um canal binário simétrico (BSC).
+- `modules/System.py`: Representação de um sistema de comunicação completo.
 
 ## Como executar
 
@@ -34,10 +36,18 @@ Neste laboratório, implementamos um canal binário simétrico (BSC) e um codifi
 - Decodifica os bits recebidos.
 - Calcula a taxa de erro de bit (Pb) e plota o gráfico de Pb vs P.
 
-### `encoder.py`
+### `modules/Encoder.py`
 
-- Define a classe `Encoder` com métodos para codificação, cálculo de síndrome, detecção de erro e decodificação.
+- Define a classe `Encoder` com métodos para codificação de bits.
 
-### `BinarySymmetricChannel.py`
+### `modules/Decoder.py`
 
-- Define a classe `BinarySymmetricChannel` com um método para transmitir bits através do canal com uma probabilidade de erro `p`.
+- Define a classe `Decoder` com métodos para cálculo de síndrome, detecção de erro e decodificação.
+
+### `modules/Channel.py`
+
+- Define a classe `Channel` com um método para transmitir bits através do canal com uma probabilidade de erro `p`.
+
+### `modules/System.py`
+
+- Define a classe `System` que integra o codificador, canal e decodificador para simular o sistema completo.
