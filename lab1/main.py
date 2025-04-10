@@ -26,7 +26,7 @@ hamming_pb_values = np.zeros(p_values.size) # System bit error probability (hamm
 co_pb_values = np.zeros(p_values.size) #      System bit error probability (channel only)
 my_pb_values = np.zeros(p_values.size) #      System bit error probability (custom)
 
-sample_size = np.logspace(4, 7, p_values.size, dtype=int)[::-1]
+sample_size = np.logspace(4, 6.5, p_values.size, dtype=int)[::-1]
 
 for k in range(p_values.size):
     """
