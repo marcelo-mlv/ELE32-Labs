@@ -1,6 +1,5 @@
 import numpy as np
 import random
-from Simulator import simulate_ldpc
 
 def gerar_matriz_paridade(N, dv, dc):
     """Gera matriz de paridade H para código LDPC regular."""
