@@ -25,10 +25,7 @@ hamming_system = System(hamming_encoder, hamming_decoder, bsc)
 
 dv = 3
 dc = 7
-# taxa = 1 - dv/dc
-N_values = [98, 196, 497, 994]          # taxa = 4/7 (Hamming)
-# N_values = [100, 200, 500, 1000]      # taxa = 1/2
-# N_values = [99, 198, 498, 999]        # taxa = 1/3
+N_values = [98, 196, 497, 994]         
 bit_flipping_max_iter = 50 
 
 # plots
@@ -115,6 +112,6 @@ plt.legend()
 plt.gca().invert_xaxis()
 
 # Save the plot as a PNG file
-plt.savefig("plot.png", format="png")
+plt.savefig("plot_vsHamming.png", format="png")
 
 plt.show()
