@@ -6,17 +6,25 @@ class LDPCgraph:
     def __init__(self, N, dv, dc):
         M = int((N * dv) / dc)
         self.N = N
-        self.dv = dv
-        self.dc = dc
         self.M = M
 
-        table = [[0 for _ in range(N)] for _ in range(M)] # row = c-node, column = v-node
+        self.table = [[0 for _ in range(N)] for _ in range(M)] # row = c-node, column = v-node
         vnodes_num_conections = [0 for _ in range(N)]
-        for i in range(M):
+        for m in range(M):
             chooseable_vnodes = [node for node in range(N) if vnodes_num_conections[node] == min(vnodes_num_conections)]
             chosen_vnodes = sorted(random.sample(chooseable_vnodes, dc))
             for vnode in chosen_vnodes:
-                table[i][vnode] = 1
+                self.table[m][vnode] = 1
                 vnodes_num_conections[vnode] += 1
 
-        self.table = table
+        self.vnodes_fails = [0 for _ in range(N)]
+
+    def check_node(self, m, input_bits):
+        result = np.dot(np.array(self.table[m]).T, input_bits) % 2
+        if result == 1:
+            for n in range(self.N):
+                if self.table[m][n] == 1:
+                    self.vnodes_fails[n] += 1
+
+    def reset_fails(self):
+        self.vnodes_fails = [0 for _ in range(self.N)]

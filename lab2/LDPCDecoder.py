@@ -1,31 +1,17 @@
 import numpy as np
+from LDPCgraph import LDPCgraph
 
-def bit_flipping_decoder(H, y, max_iter=50):
-    """
-    Decodes a received word using the Bit-Flipping algorithm.
-
-    Params:
-        H (np.ndarray): Parity-check matrix.
-        y (np.ndarray): Received word.
-        max_iter (int): Maximum number of iterations.
-
-    Returns:
-        np.ndarray: Decoded word.
-    """
-    y = y.copy()
+def bit_flipping_decoder(Graph, y, max_iter=20):
     for _ in range(max_iter):
-        syndrome = (H @ y) % 2
-        if np.all(syndrome == 0):
-            break
-
-        unsat = H @ y % 2
-        error_per_bit = H.T @ unsat
-        max_errors = np.max(error_per_bit)
-
-        if max_errors == 0:
-            break
-
-        flip_indices = np.where(error_per_bit == max_errors)[0]
-        y[flip_indices] = 1 - y[flip_indices]
+        for m in range(Graph.M):
+            Graph.check_node(m, y)
+        max_fails = max(Graph.vnodes_fails)
+        if max_fails == 0:
+            return y
+        else:
+            for n in range(Graph.N):
+                if Graph.vnodes_fails[n] == max_fails:
+                    y[n] = (y[n] + 1) % 2 # bit flip
+        Graph.reset_fails()
 
     return y
