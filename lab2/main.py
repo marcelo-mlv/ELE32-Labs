@@ -10,22 +10,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-# dv = 3
-# dc = 7
-
-# N = 98
-# ldpc_graph = LDPCgraph(N, dv, dc)
-# input_bits = np.zeros(N, dtype=int)
-
-# channel = BinarySymmetricChannel()
-# channel_bits = channel.transmit(input_bits, 0.1)
-# print(channel_bits)
-
-# decoded_bits = bit_flipping_decoder(ldpc_graph, channel_bits, 50)
-# print(decoded_bits)
-
 # System declaration
 
+# Hamming
 hamming_encoder = HammingEncoder()
 hamming_decoder = HammingDecoder()
 bsc = BinarySymmetricChannel()
@@ -33,38 +20,54 @@ bsc = BinarySymmetricChannel()
 channel_only = System(None, None, bsc)
 hamming_system = System(hamming_encoder, hamming_decoder, bsc)
 
-n_iterations = 20
 
-p_values = np.logspace(-5, np.log10(0.5), n_iterations) # Probability of a bit being flipped during transmission
-hamming_pb_values = np.zeros(p_values.size) # System bit error probability (hamming)
-co_pb_values = np.zeros(p_values.size) #      System bit error probability (channel only)
+# LDPC
+
+dv = 3
+dc = 7
+# taxa = 1 - dv/dc
+N_values = [98, 196, 497, 994]          # taxa = 4/7 (Hamming)
+# N_values = [100, 200, 500, 1000]      # taxa = 1/2
+# N_values = [99, 198, 498, 999]        # taxa = 1/3
+
+
+# plots
+
+n_iterations = 20
+p_values = np.logspace(-5, np.log10(0.5), n_iterations)       # Probability of a bit being flipped during transmission
+co_pb_values = np.zeros(p_values.size)                        # System bit error probability (channel only)
+hamming_pb_values = np.zeros(p_values.size)                   # System bit error probability (hamming)             
+LDPC_pb_values = np.zeros((len(N_values), p_values.size))     # System bit error probability (LDPC: N~100, N~200, N~500, N~1000)
 
 sample_size = np.logspace(4, 6.5, p_values.size, dtype=int)[::-1]
 
 for k in range(p_values.size):
-    """
-    Simulates the transmission of random bits through 2 systems
-    and calculates the bit error probability for different values of p.
-        System 1: Channel Only
-        System 2: Hamming Encoding and Decoding
-        System 2: Custom Encoding and Decoding
-    Both systems use BSC as channel.
-    """
     
-    random_bits = [random.randint(0, 1) for _ in range(sample_size[k] - sample_size[k]%20)]
-    
-    flipped_bits = {"System 1": 0, "System 2": 0}
+    flipped_bits = np.zeros(len(N_values) + 2)
 
-    # System 1
+    # LDPCs
+    for i in range(len(N_values)):
+        N = N_values[i]
+        input_bits = np.zeros(N, dtype=int)
+        channel_bits = bsc.transmit(input_bits, p_values[k])
+        decoded_bits = bit_flipping_decoder(LDPCgraph(N,dv,dc), channel_bits)
+        for bit in decoded_bits:
+            if bit == 1:
+                flipped_bits[i] += 1
+        LDPC_pb_values[i][k] = flipped_bits[i] / N
+       
+    # channel only
+    random_bits = [random.randint(0, 1) for _ in range(sample_size[k] - sample_size[k]%20)]
+
     channel_bits = channel_only.process(random_bits.copy(), p_values[k])
 
     for j in range(len(random_bits)):
         if random_bits[j] != channel_bits[j]:
-            flipped_bits["System 1"] += 1
+            flipped_bits[4] += 1
     
-    co_pb_values[k] = flipped_bits["System 1"] / len(random_bits)
+    co_pb_values[k] = flipped_bits[4] / len(random_bits)
 
-    # System 2
+    # hamming
     for i in range(0, len(random_bits), 4):
 
         u = random_bits[i:i+4]
@@ -74,9 +77,10 @@ for k in range(p_values.size):
 
         for j in range(len(u)):
             if u[j] != u_hat[j]:
-                flipped_bits["System 2"] += 1
+                flipped_bits[5] += 1
 
-    hamming_pb_values[k] = flipped_bits["System 2"] / len(random_bits)
+    hamming_pb_values[k] = flipped_bits[5] / len(random_bits)
+
 
     print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
     print(f"Iteration no. {k+1}")
@@ -84,6 +88,10 @@ for k in range(p_values.size):
     print(f"p: {p_values[k]}")
     print(f"\tCHANNEL ONLY: pb = {co_pb_values[k]:.7f}")
     print(f"\tHAMMING:      pb = {hamming_pb_values[k]:.7f}")
+    print(f"\tLDPC, N~100:   pb = {LDPC_pb_values[0][k]:.7f}")
+    print(f"\tLDPC, N~200:   pb = {LDPC_pb_values[1][k]:.7f}")
+    print(f"\tLDPC, N~500:   pb = {LDPC_pb_values[2][k]:.7f}")
+    print(f"\tLDPC, N~1000:   pb = {LDPC_pb_values[3][k]:.7f}")
 
 """
 Plots the bit error probability as a function of the probability of a bit being flipped during transmission.
@@ -91,8 +99,12 @@ Plots the bit error probability as a function of the probability of a bit being 
     y axis: pb_values (list), in logarithmic scale
 """
 plt.figure()
-plt.plot(p_values, hamming_pb_values, marker='o', label='Hamming')
-plt.plot(p_values, co_pb_values, marker='x', label='Somente Canal')
+plt.plot(p_values, co_pb_values, label='Somente Canal')
+plt.plot(p_values, hamming_pb_values, label='Hamming')
+plt.plot(p_values, LDPC_pb_values[0], label='LDPC N~100')
+plt.plot(p_values, LDPC_pb_values[1], label='LDPC N~200')
+plt.plot(p_values, LDPC_pb_values[2], label='LDPC N~500')
+plt.plot(p_values, LDPC_pb_values[3], label='LDPC N~1000')
 plt.xscale('log')
 plt.yscale('log')
 plt.xlabel('P')
