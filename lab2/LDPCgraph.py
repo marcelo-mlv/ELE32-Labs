@@ -1,35 +1,22 @@
 import numpy as np
 import random
 
-def generate_parity_matrix(N, dv, dc):
-    """
-    Generates a parity-check matrix H for a regular LDPC code.
+class LDPCgraph:
 
-    Params:
-        N (int): Number of variable nodes (v-nodes).
-        dv (int): Number of edges per v-node.
-        dc (int): Number of edges per c-node.
+    def __init__(self, N, dv, dc):
+        M = int((N * dv) / dc)
+        self.N = N
+        self.dv = dv
+        self.dc = dc
+        self.M = M
 
-    Returns:
-        H (np.ndarray): Parity-check matrix.
-    """
-    M = (N * dv) // dc  # Number of check nodes (c-nodes)
-    H = np.zeros((M, N), dtype=int)
+        table = [[0 for _ in range(N)] for _ in range(M)] # row = c-node, column = v-node
+        vnodes_num_conections = [0 for _ in range(N)]
+        for i in range(M):
+            chooseable_vnodes = [node for node in range(N) if vnodes_num_conections[node] == min(vnodes_num_conections)]
+            chosen_vnodes = sorted(random.sample(chooseable_vnodes, dc))
+            for vnode in chosen_vnodes:
+                table[i][vnode] = 1
+                vnodes_num_conections[vnode] += 1
 
-    edges = []
-    for i in range(N):
-        for _ in range(dv):
-            edges.append(i)
-
-    check_nodes = list(range(M)) * dc
-    if len(edges) != len(check_nodes):
-        raise ValueError("Invalid parameters: number of edges does not match.")
-
-    random.shuffle(check_nodes)
-
-    for v, c in zip(edges, check_nodes):
-        while H[c, v] == 1:  # Avoid multiple connections
-            c = random.choice(range(M))
-        H[c, v] = 1
-
-    return H
+        self.table = table
