@@ -45,13 +45,16 @@ for k in range(p_values.size):
     # LDPCs
     for i in range(len(N_values)):
         N = N_values[i]
-        input_bits = np.zeros(N, dtype=int)
-        channel_bits = bsc.transmit(input_bits, p_values[k])
-        decoded_bits = bit_flipping_decoder(LDPCgraph(N,dv,dc), channel_bits, bit_flipping_max_iter)
-        for bit in decoded_bits:
-            if bit == 1:
-                flipped_bits[i] += 1
-        LDPC_pb_values[i][k] = flipped_bits[i] / N
+        num_total_bits = int(10000/N) * N
+        total_bits = np.zeros(num_total_bits)
+        for j in range(0, num_total_bits, N):
+            input_bits = total_bits[j:j+N]
+            channel_bits = bsc.transmit(input_bits, p_values[k])
+            decoded_bits = bit_flipping_decoder(LDPCgraph(N,dv,dc), channel_bits, bit_flipping_max_iter)
+            for bit in decoded_bits:
+                if bit == 1:
+                    flipped_bits[i] += 1
+        LDPC_pb_values[i][k] = flipped_bits[i] / num_total_bits
        
     # channel only
     random_bits = [random.randint(0, 1) for _ in range(sample_size[k] - sample_size[k]%20)]
