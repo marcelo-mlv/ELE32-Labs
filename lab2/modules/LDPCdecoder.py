@@ -1,6 +1,3 @@
-import numpy as np
-from LDPCgraph import LDPCgraph
-
 def bit_flipping_decoder(Graph, y, max_iter=20):
     for _ in range(max_iter):
         for m in range(Graph.M):
