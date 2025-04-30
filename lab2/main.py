@@ -29,7 +29,7 @@ dc = 7
 N_values = [98, 196, 497, 994]          # taxa = 4/7 (Hamming)
 # N_values = [100, 200, 500, 1000]      # taxa = 1/2
 # N_values = [99, 198, 498, 999]        # taxa = 1/3
-
+bit_flipping_max_iter = 50 
 
 # plots
 
@@ -50,7 +50,7 @@ for k in range(p_values.size):
         N = N_values[i]
         input_bits = np.zeros(N, dtype=int)
         channel_bits = bsc.transmit(input_bits, p_values[k])
-        decoded_bits = bit_flipping_decoder(LDPCgraph(N,dv,dc), channel_bits)
+        decoded_bits = bit_flipping_decoder(LDPCgraph(N,dv,dc), channel_bits, bit_flipping_max_iter)
         for bit in decoded_bits:
             if bit == 1:
                 flipped_bits[i] += 1
