@@ -8,7 +8,7 @@ class LDPCgraph:
         self.N = N
         self.M = M
 
-        self.table = [[0 for _ in range(N)] for _ in range(M)] # row = c-node, column = v-node
+        self.table = np.array((M,N), dtype=int) # row = c-node, column = v-node
         vnodes_num_conections = [0 for _ in range(N)]
         for m in range(M):
             chooseable_vnodes = [node for node in range(N) if vnodes_num_conections[node] == min(vnodes_num_conections)]
@@ -17,7 +17,7 @@ class LDPCgraph:
                 self.table[m][vnode] = 1
                 vnodes_num_conections[vnode] += 1
 
-        self.vnodes_fails = [0 for _ in range(N)]
+        self.vnodes_fails = np.array(N, dtype=int)
 
     def check_node(self, m, input_bits):
         result = np.dot(np.array(self.table[m]).T, input_bits) % 2
@@ -27,4 +27,4 @@ class LDPCgraph:
                     self.vnodes_fails[n] += 1
 
     def reset_fails(self):
-        self.vnodes_fails = [0 for _ in range(self.N)]
+        self.vnodes_fails = np.array(self.N, dtype=int)
