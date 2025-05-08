@@ -40,21 +40,18 @@ sample_size = np.logspace(4, 6.5, p_values.size, dtype=int)[::-1]
 
 for k in range(p_values.size):
     
-    flipped_bits = np.zeros(len(N_values) + 2)
+    num_of_flipped_bits = np.zeros(len(N_values) + 2)
 
     # LDPCs
     for i in range(len(N_values)):
         N = N_values[i]
-        num_total_bits = int(10000/N) * N
-        total_bits = np.zeros(num_total_bits)
-        for j in range(0, num_total_bits, N):
-            input_bits = total_bits[j:j+N]
-            channel_bits = bsc.transmit(input_bits, p_values[k])
-            decoded_bits = bit_flipping_decoder(LDPCgraph(N,dv,dc), channel_bits, bit_flipping_max_iter)
-            for bit in decoded_bits:
-                if bit == 1:
-                    flipped_bits[i] += 1
-        LDPC_pb_values[i][k] = flipped_bits[i] / num_total_bits
+        input_bits = np.zeros(N, dtype=int)
+        channel_bits = bsc.transmit(input_bits, p_values[k])
+        decoded_bits = bit_flipping_decoder(LDPCgraph(N,dv,dc), channel_bits, bit_flipping_max_iter)
+        for bit in decoded_bits:
+            if bit == 1:
+                num_of_flipped_bits[i] += 1
+        LDPC_pb_values[i][k] = num_of_flipped_bits[i] / N
        
     # channel only
     random_bits = [random.randint(0, 1) for _ in range(sample_size[k] - sample_size[k]%20)]
@@ -63,9 +60,9 @@ for k in range(p_values.size):
 
     for j in range(len(random_bits)):
         if random_bits[j] != channel_bits[j]:
-            flipped_bits[4] += 1
+            num_of_flipped_bits[4] += 1
     
-    co_pb_values[k] = flipped_bits[4] / len(random_bits)
+    co_pb_values[k] = num_of_flipped_bits[4] / len(random_bits)
 
     # hamming
     for i in range(0, len(random_bits), 4):
@@ -77,9 +74,9 @@ for k in range(p_values.size):
 
         for j in range(len(u)):
             if u[j] != u_hat[j]:
-                flipped_bits[5] += 1
+                num_of_flipped_bits[5] += 1
 
-    hamming_pb_values[k] = flipped_bits[5] / len(random_bits)
+    hamming_pb_values[k] = num_of_flipped_bits[5] / len(random_bits)
 
 
     print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=")
