@@ -17,7 +17,7 @@ class LDPC_LLR_graph:
         self.table = np.array([[(0, 0) for _ in range(N)] for _ in range(M)], dtype=object)
         # adjacency matrix (M x N)  
         # rows = c-nodes (M), columns = v-nodes (N), 
-        # tuple[0] = {1 if conected, else 0}, tuple[1] = LLR
+        # tuple[0] = {1 if conected, else 0}, tuple[1] = LLR (message)
         
         vnodes_num_conections = np.zeros(N)
         for m in range(M):
@@ -50,7 +50,7 @@ class LDPC_LLR_graph:
     
     def consensus_propagation(self, n):
         conections_idx = np.array([], dtype=int)
-        sum = 0
+        sum = self.channel_llrs[n]
         for m in range(self.M):
             if self.table[m][n][0] == 1:
                 conections_idx = np.append(conections_idx, m)
@@ -75,4 +75,33 @@ class LDPC_LLR_graph:
                         current_min = llr
             discord *= current_min
             self.table[m][n][1] = discord
+        return
+    
+    def is_cnode_valid(self, m):
+        product = 1
+        valid = True
+        for n in range(self.N):
+            if self.table[m][n][0] == 1:
+                product *= np.sign(self.table[m][n][1])
+        if product == -1:
+            valid = False
+        return valid
+    
+    def decode(self, max_iter=20):
+        for _ in range(max_iter):
+            
+            for n in range(self.N):
+                self.consensus_propagation(n)
+
+            is_word_valid = True
+            for m in range(self.M):
+                if self.is_cnode_valid(m) == False:
+                    is_word_valid = False
+                    break
+            if is_word_valid == True: break
+
+            for m in range(self.M):
+                self.discord_propagation(m)
+
+        # decisão
         return
