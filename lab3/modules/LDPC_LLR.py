@@ -31,7 +31,9 @@ class LDPC_LLR:
 
     def llr(self, channel_input):
 
-        # to do
+        ####################
+        ###### to do ######
+        ###################
 
         output = np.zeros(self.N, dtype=int)
         return output
@@ -41,7 +43,7 @@ class LDPC_LLR:
         with open(filename, mode='w', newline='') as file:
             writer = csv.writer(file)
             for n in range(self.N):
-                connected_cnodes = [m for m in range(self.M) if self.table[m][n][0] == 1]
+                connected_cnodes = [(m+1) for m in range(self.M) if self.table[m][n][0] == 1]   # i = 1,...,N
                 writer.writerow(connected_cnodes)
     
     # decode
