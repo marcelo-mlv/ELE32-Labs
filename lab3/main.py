@@ -26,9 +26,9 @@ import matplotlib.pyplot as plt
 dv = 3
 dc = 7
 N = 98
-graph = LDPC_LLR_graph(N,dv,dc)
+input_ = np.zeros(N, dtype=int)
+graph = LDPC_LLR_graph(dv,dc,input_)
 graph.export_to_csv('ldpc_graph.csv')
-
 
 
 # N_values = [98, 196, 497, 994]         
