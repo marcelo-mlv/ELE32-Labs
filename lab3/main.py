@@ -2,8 +2,7 @@ from modules.Encoder import HammingEncoder, MyEncoder
 from modules.Decoder import HammingDecoder, MyDecoder
 from modules.Channel import BinarySymmetricChannel
 from modules.System import System
-from modules.LDPCgraph import LDPCgraph
-from modules.LDPCdecoder import bit_flipping_decoder
+from modules.LDPC import LDPCgraph, bit_flipping_decoder
 
 import random
 import numpy as np
