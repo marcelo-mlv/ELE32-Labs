@@ -3,7 +3,7 @@ from modules.Decoder import HammingDecoder, MyDecoder
 from modules.Channel import BinarySymmetricChannel
 from modules.System import System
 from modules.LDPC import LDPCgraph, bit_flipping_decoder
-from modules.LDPC_LLR import LDPC_LLR_graph
+from modules.LDPC_LLR import LDPC_LLR
 
 import random
 import numpy as np
@@ -27,7 +27,7 @@ dv = 3
 dc = 7
 N = 98
 input_ = np.zeros(N, dtype=int)
-graph = LDPC_LLR_graph(dv,dc,input_)
+graph = LDPC_LLR(dv,dc,input_)
 graph.export_to_csv('ldpc_graph.csv')
 
 

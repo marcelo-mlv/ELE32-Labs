@@ -2,7 +2,7 @@ import numpy as np
 import random
 import csv   
 
-class LDPC_LLR_graph:
+class LDPC_LLR:
 
     def __init__(self, dv, dc, channel_input):
         
@@ -11,6 +11,7 @@ class LDPC_LLR_graph:
         self.N = N
         self.M = M
 
+        self.bits = channel_input
         self.channel_llrs = self.llr(channel_input)
         # LLRs from the channel input
 
@@ -27,19 +28,6 @@ class LDPC_LLR_graph:
                 self.table[m][vnode][0] = 1
                 vnodes_num_conections[vnode] += 1
 
-        self.vnodes_fails = np.zeros(N, dtype=int)
-
-
-    def export_to_csv(self, filename):
-        with open(filename, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            for n in range(self.N):
-                connected_cnodes = [m for m in range(self.M) if self.table[m][n][0] == 1]
-                writer.writerow(connected_cnodes)
-
-
-    def reset_fails(self):
-        self.vnodes_fails = np.zeros(self.N, dtype=int)
 
     def llr(self, channel_input):
 
@@ -47,6 +35,37 @@ class LDPC_LLR_graph:
 
         output = np.zeros(self.N, dtype=int)
         return output
+    
+
+    def export_to_csv(self, filename):
+        with open(filename, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            for n in range(self.N):
+                connected_cnodes = [m for m in range(self.M) if self.table[m][n][0] == 1]
+                writer.writerow(connected_cnodes)
+    
+    # decode
+    
+    def decode(self, max_iter=20):
+        for _ in range(max_iter):
+
+            for n in range(self.N):
+                self.consensus_propagation(n)
+
+            is_word_valid = True
+            for m in range(self.M):
+                if self.is_cnode_valid(m) == False:
+                    is_word_valid = False
+                    break
+            if is_word_valid == True: break
+
+            for m in range(self.M):
+                self.discord_propagation(m)
+
+        for n in range(self.N):
+            self.bit_decision(n)
+
+        return self.bits
     
     def consensus_propagation(self, n):
         conections_idx = np.array([], dtype=int)
@@ -87,21 +106,12 @@ class LDPC_LLR_graph:
             valid = False
         return valid
     
-    def decode(self, max_iter=20):
-        for _ in range(max_iter):
-            
-            for n in range(self.N):
-                self.consensus_propagation(n)
-
-            is_word_valid = True
-            for m in range(self.M):
-                if self.is_cnode_valid(m) == False:
-                    is_word_valid = False
-                    break
-            if is_word_valid == True: break
-
-            for m in range(self.M):
-                self.discord_propagation(m)
-
-        # decisão
-        return
+    def bit_decision(self, n):
+        sum = self.channel_llrs[n]
+        for m in range(self.M):
+            if self.table[m][n][0] == 1:
+                sum += self.table[m][n][1]
+        if sum >= 0:
+            self.bits[n] = 0
+        else:
+            self.bits[n] = 1
