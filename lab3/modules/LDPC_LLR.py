@@ -4,7 +4,7 @@ import csv
 
 class LDPC_LLR:
 
-    def __init__(self, dv, dc, channel_input):
+    def __init__(self, dv, dc, channel_input, Nzero):
         
         N = len(channel_input)
         M = int((N * dv) / dc)
@@ -12,7 +12,7 @@ class LDPC_LLR:
         self.M = M
 
         self.bits = channel_input
-        self.channel_llrs = self.llr(channel_input)
+        self.channel_llrs = self.llr(channel_input, Nzero)
         # LLRs from the channel input
 
         self.table = np.array([[(0, 0) for _ in range(N)] for _ in range(M)], dtype=object)
@@ -29,14 +29,11 @@ class LDPC_LLR:
                 vnodes_num_conections[vnode] += 1
 
 
-    def llr(self, channel_input):
-
-        ####################
-        ###### to do ######
-        ###################
-
-        output = np.zeros(self.N, dtype=int)
-        return output
+    def llr(self, channel_input, Nzero):
+        llr = np.zeros(self.N, dtype=float)
+        for i in channel_input:
+            llr[i] = 4*channel_input[i]/Nzero       # L = 2*r/var = 4*r/N0
+        return llr
     
 
     def export_to_csv(self, filename):
