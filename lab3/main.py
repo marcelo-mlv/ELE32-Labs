@@ -32,6 +32,8 @@ print(f"LDPC-LLR GRAPH BUILT\n")
 ### PLOT ###              
 pb_ldpc_llr = np.zeros(len(snr_values))
 pb_ldpc_bf = np.zeros(len(snr_values))
+pb_bpsk = np.zeros(len(snr_values))
+pb_hamming = np.zeros(len(snr_values))
 # INPUT #
 s_symbols = np.full(N, 1, dtype=int)
 s_bits = np.full(N, 0, dtype=int)
@@ -52,15 +54,19 @@ for k in range(len(snr_values)):
         # r_bits = bsc.transmit(s_bits, p)
 
         decoded_symbols = ldpc_llr.decode(r_symbols, Nzero, decode_max_iter)
-        # decoded_symbols = bpsk.decode(r_symbols, Nzero, decode_max_iter) 
-        # decoded_symbols = ldpc_bf.decode(r_symbols, Nzero, decode_max_iter) -- BSC -- qual a relação de p (do BSC) com Eb/N0 (snr)
-        # decoded_symbols = hamming.decode(r_symbols, Nzero, decode_max_iter) -- BSC
+        # decoded_symbols = bpsk.decode(r_symbols) 
+        # decoded_symbols = ldpc_bf.decode(r_bits, bf_max_iter) -- BSC -- qual a relação de p (do BSC) com Eb/N0 (snr)
+        # decoded_symbols = hamming.decode(r_bits, ...) -- BSC
 
         for s in decoded_symbols:
             if s == -1:
                 num_of_flipped_symbols += 1
 
     pb_ldpc_llr[k] = num_of_flipped_symbols / (N*samples)
+    # add
+    # add
+    # add
+        
 
     print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
     print(f"point no. {k+1} / {len(snr_values)}\n")
@@ -73,6 +79,8 @@ with open("output/points.txt", "w") as file:
         file.write(f"snr: {snr_values[k]}\n")
         file.write(f"pb LDPC-LLR: {pb_ldpc_llr[k]}\n")
         file.write(f"pb LDPC-BF: {pb_ldpc_bf[k]}\n")
+        # add
+        # add
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 print(f"points.txt [OK]\n")
 
@@ -80,6 +88,8 @@ print(f"points.txt [OK]\n")
 plt.figure()
 plt.plot(snr_values, pb_ldpc_llr)
 # plt.plot(snr_values, pb_ldpc_bf)
+# add
+# add
 plt.yscale('log')
 plt.xlabel('snr (dB)')
 plt.ylabel('Pb')
