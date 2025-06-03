@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import os
 import csv   
 
 class LDPC_LLR:
@@ -25,7 +26,8 @@ class LDPC_LLR:
     
 
     def export_to_csv(self, filename):
-        with open(filename, mode='w', newline='') as file:
+        path = os.path.join("output", filename)
+        with open(path, mode='w', newline='') as file:
             writer = csv.writer(file)
             for n in range(self.N):
                 connected_cnodes = [(m+1) for m in range(self.M) if self.table[m][n][0] == 1]   # i = 1,...,N
