@@ -1,4 +1,4 @@
-from modules.Channel import AWGNChannel
+from modules.Channel import AWGNChannel, BinarySymmetricChannel
 from modules.LDPC_LLR import LDPC_LLR
 from modules.LDPC_BF import LDPC_BF
 
@@ -17,7 +17,8 @@ snr_values = np.arange(0, 5.5, 0.5)
 
 
 ### CHANNEL ###
-channel = AWGNChannel()
+awgnc = AWGNChannel()
+bsc = BinarySymmetricChannel()
 
 ### LDPC ###
 ldpc_llr = LDPC_LLR.from_csv('ldpc_graph.csv', dv, dc)
@@ -33,19 +34,27 @@ pb_ldpc_llr = np.zeros(len(snr_values))
 pb_ldpc_bf = np.zeros(len(snr_values))
 # INPUT #
 s_symbols = np.full(N, 1, dtype=int)
+s_bits = np.full(N, 0, dtype=int)
 
 for k in range(len(snr_values)):
 
     snr = 10 ** (snr_values[k]/10)
     Nzero = 1 / snr
 
+    # p = Q(raiz(3.snr))
+
     ### SAMPLES ###
     num_of_flipped_symbols = 0
     for _ in range(samples):
     
-        r_symbols = channel.transmit(s_symbols, Nzero)
+        r_symbols = awgnc.transmit(s_symbols, Nzero)
+
+        # r_bits = bsc.transmit(s_bits, p)
 
         decoded_symbols = ldpc_llr.decode(r_symbols, Nzero, decode_max_iter)
+        # decoded_symbols = bpsk.decode(r_symbols, Nzero, decode_max_iter) 
+        # decoded_symbols = ldpc_bf.decode(r_symbols, Nzero, decode_max_iter) -- BSC -- qual a relação de p (do BSC) com Eb/N0 (snr)
+        # decoded_symbols = hamming.decode(r_symbols, Nzero, decode_max_iter) -- BSC
 
         for s in decoded_symbols:
             if s == -1:
