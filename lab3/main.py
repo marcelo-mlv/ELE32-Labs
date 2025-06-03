@@ -1,10 +1,12 @@
 from modules.Channel import AWGNChannel
 from modules.LDPC_LLR import LDPC_LLR
+from modules.LDPC_BF import LDPC_BF
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 ### PARAMETERS ###
+# LDPC #
 dv = 3
 dc = 7
 N = 1001
@@ -20,10 +22,15 @@ channel = AWGNChannel()
 ### LDPC ###
 ldpc_llr = LDPC_LLR.from_csv('ldpc_graph.csv', dv, dc)
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-print(f"ldpc_graph.csv Readed\n")
+print(f"LDPC-LLR GRAPH BUILT\n")
+
+# ldpc_bf = LDPC_BF.from_csv('ldpc_graph.csv', dv, dc)
+# print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+# print(f"LDPC-BF GRAPH BUILT\n")
 
 ### PLOT ###              
 pb_ldpc_llr = np.zeros(len(snr_values))
+pb_ldpc_bf = np.zeros(len(snr_values))
 # INPUT #
 s_symbols = np.full(N, 1, dtype=int)
 
@@ -56,12 +63,14 @@ with open("output/points.txt", "w") as file:
         file.write(f"point no. {k+1}\n")
         file.write(f"snr: {snr_values[k]}\n")
         file.write(f"pb LDPC-LLR: {pb_ldpc_llr[k]}\n")
+        file.write(f"pb LDPC-BF: {pb_ldpc_bf[k]}\n")
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 print(f"points.txt [OK]\n")
 
 ### OUTPUT - POINTS.TXT ###
 plt.figure()
 plt.plot(snr_values, pb_ldpc_llr)
+# plt.plot(snr_values, pb_ldpc_bf)
 plt.yscale('log')
 plt.xlabel('snr (dB)')
 plt.ylabel('Pb')
