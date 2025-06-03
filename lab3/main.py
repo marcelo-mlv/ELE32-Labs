@@ -4,26 +4,31 @@ from modules.LDPC_LLR import LDPC_LLR
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+### PARAMETERS ###
+# LDPC #
+dv = 3      # rate = 4/7 #
+dc = 7
+N = 994     #98, 994, 1001
+decode_max_iter = 50
+# plot #
+samples = 5
+snr_values_dB = np.arange(0, 5.5, 0.5)
+
+
 ### CHANNEL ###
 channel = AWGNChannel()
 
 ### LDPC ###
-# rate = 4/7 #
-dv = 3
-dc = 7
-N = 994 #98, 994, 1001
-decode_max_iter = 50
 graph = LDPC_LLR(dv, dc, N)
 # OUTPUT - .CSV #
 graph.export_to_csv('ldpc_graph.csv')
 print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 print("ldpc_graph.csv [OK]\n")
 
-### PLOT ###
-snr_values_dB = np.arange(0, 5.5, 0.5) 
+### PLOT ### 
 snr_values = 10 ** (snr_values_dB/10)               
 pb_values = np.zeros(len(snr_values))
-samples = 5
 # INPUT #
 s_symbols = np.full(N, 1, dtype=int)
 
