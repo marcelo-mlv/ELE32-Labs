@@ -4,16 +4,11 @@ import csv
 
 class LDPC_LLR:
 
-    def __init__(self, dv, dc, channel_input, Nzero):
+    def __init__(self, dv, dc, N):
         
-        N = len(channel_input)
         M = int((N * dv) / dc)
         self.N = N
         self.M = M
-
-        self.bits = channel_input
-        self.channel_llrs = self.llr(channel_input, Nzero)
-        # LLRs from the channel input
 
         self.table = np.array([[(0, 0) for _ in range(N)] for _ in range(M)], dtype=object)
         # adjacency matrix (M x N)  
@@ -27,13 +22,6 @@ class LDPC_LLR:
             for vnode in chosen_vnodes:
                 self.table[m][vnode][0] = 1
                 vnodes_num_conections[vnode] += 1
-
-
-    def llr(self, channel_input, Nzero):
-        llr = np.zeros(self.N, dtype=float)
-        for i in channel_input:
-            llr[i] = 4*channel_input[i]/Nzero       # L = 2*r/var = 4*r/N0
-        return llr
     
 
     def export_to_csv(self, filename):
@@ -45,7 +33,12 @@ class LDPC_LLR:
     
     # decode
     
-    def decode(self, max_iter=20):
+    def decode(self, channel_input, Nzero, max_iter=20):
+
+        self.symbols = channel_input
+        self.channel_llrs = self.llr(Nzero)
+        # LLRs from the channel input
+
         for _ in range(max_iter):
 
             for n in range(self.N):
@@ -62,9 +55,17 @@ class LDPC_LLR:
                 self.discord_propagation(m)
 
         for n in range(self.N):
-            self.bit_decision(n)
+            self.symbol_decision(n)
 
-        return self.bits
+        self.reset_messages()
+
+        return self.symbols
+    
+    def llr(self, Nzero):
+        llr = np.array([], dtype=float)
+        for r in self.symbols:
+            llr = np.append(llr, 4 * r / Nzero)       # L = 2*r/var = 4*r/N0
+        return llr
     
     def consensus_propagation(self, n):
         conections_idx = np.array([], dtype=int)
@@ -105,12 +106,20 @@ class LDPC_LLR:
             valid = False
         return valid
     
-    def bit_decision(self, n):
+    def symbol_decision(self, n):
         sum = self.channel_llrs[n]
         for m in range(self.M):
             if self.table[m][n][0] == 1:
                 sum += self.table[m][n][1]
         if sum >= 0:
-            self.bits[n] = 0
+            self.symbols[n] = 1
         else:
-            self.bits[n] = 1
+            self.symbols[n] = -1
+        return
+
+    def reset_messages(self):
+        for m in range(self.M):
+            for n in range(self.N):
+                if self.table[m][n][0] == 1:    # if is a conection
+                    self.table[m][n][1] = 0     # reset message
+        return
