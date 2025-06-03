@@ -5,10 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ### PARAMETERS ###
-# LDPC #
-dv = 3      # rate = 4/7 #
+dv = 3
 dc = 7
-N = 1001   #98, 994, 1001
+N = 1001
 decode_max_iter = 20
 # plot #
 samples = 100
@@ -19,11 +18,9 @@ snr_values = np.arange(0, 5.5, 0.5)
 channel = AWGNChannel()
 
 ### LDPC ###
-graph = LDPC_LLR(dv, dc, N)
-# OUTPUT - .CSV #
-graph.export_to_csv('ldpc_graph.csv')
+ldpc_llr = LDPC_LLR.from_csv('ldpc_graph.csv', dv, dc)
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-print(f"ldpc_graph.csv [OK]\n")
+print(f"ldpc_graph.csv Readed\n")
 
 ### PLOT ###              
 pb_ldpc_llr = np.zeros(len(snr_values))
@@ -41,7 +38,7 @@ for k in range(len(snr_values)):
     
         r_symbols = channel.transmit(s_symbols, Nzero)
 
-        decoded_symbols = graph.decode(r_symbols, Nzero, decode_max_iter)
+        decoded_symbols = ldpc_llr.decode(r_symbols, Nzero, decode_max_iter)
 
         for s in decoded_symbols:
             if s == -1:
@@ -53,7 +50,7 @@ for k in range(len(snr_values)):
     print(f"point no. {k+1} / {len(snr_values)}\n")
 
 ### OUTPUT - POINTS.TXT ###
-with open("output/ldpc_llr.txt", "w") as file:
+with open("output/points.txt", "w") as file:
     for k in range(len(snr_values)):
         file.write(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
         file.write(f"point no. {k+1}\n")

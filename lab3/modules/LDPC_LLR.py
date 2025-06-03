@@ -8,7 +8,7 @@ MESSAGE = 1
 
 class LDPC_LLR:
 
-    def __init__(self, dv, dc, N):
+    def __init__(self, dv, dc, N, init_random=True):
         
         M = int((N * dv) / dc)
         self.N = N
@@ -20,13 +20,38 @@ class LDPC_LLR:
         # table[m][n][1] = 'message' (LLR)
         
         # randomly generated connections
-        vnodes_num_conections = np.zeros(N)
-        for m in range(M):
-            chooseable_vnodes = [node for node in range(N) if vnodes_num_conections[node] == min(vnodes_num_conections)]
-            chosen_vnodes = sorted(random.sample(chooseable_vnodes, dc))
-            for n in chosen_vnodes:
-                self.table[m][n][CONNECTED] = 1
-                vnodes_num_conections[n] += 1
+        if init_random:
+            vnodes_num_conections = np.zeros(N)
+            for m in range(M):
+                chooseable_vnodes = [node for node in range(N) if vnodes_num_conections[node] == min(vnodes_num_conections)]
+                chosen_vnodes = sorted(random.sample(chooseable_vnodes, dc))
+                for n in chosen_vnodes:
+                    self.table[m][n][CONNECTED] = 1
+                    vnodes_num_conections[n] += 1
+
+    @classmethod
+    def from_csv(cls, filename, dv, dc):
+        path = os.path.join("output", filename)
+        connections = []
+
+        with open(path, mode='r', newline='') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                connections.append([int(x) - 1 for x in row])  # converte para índice 0-based
+
+        N = len(connections)
+        M = max((max(cnodes) if cnodes else -1) for cnodes in connections) + 1
+
+        # Inicializa sem rodar o random do __init__
+        obj = cls(dv, dc, N=N, init_random=False)
+        obj.M = M
+        obj.table = np.zeros((M, N, 2))
+
+        for v_node, c_nodes in enumerate(connections):
+            for c_node in c_nodes:
+                obj.table[c_node][v_node][CONNECTED] = 1
+
+        return obj
     
 
     def export_to_csv(self, filename):
