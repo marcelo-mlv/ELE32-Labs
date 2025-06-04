@@ -2,6 +2,7 @@ from modules.Channel import AWGNChannel, BinarySymmetricChannel
 from modules.LDPC_LLR import LDPC_LLR
 from modules.LDPC_BF import LDPC_BF
 from modules.BPSK import BPSK
+from modules.Hamming import Hamming
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,9 +29,8 @@ print(f"LDPC-LLR GRAPH BUILT\n")
 ### BPSK ###
 bpsk = BPSK()
 
-# ldpc_bf = LDPC_BF.from_csv('ldpc_graph.csv', dv, dc)
-# print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-# print(f"LDPC-BF GRAPH BUILT\n")
+### HAMMING ###
+hamming = Hamming()
 
 ### PLOT ###              
 pb_ldpc_llr = np.zeros(len(snr_values))
