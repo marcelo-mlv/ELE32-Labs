@@ -1,6 +1,7 @@
 from modules.Channel import AWGNChannel, BinarySymmetricChannel
 from modules.LDPC_LLR import LDPC_LLR
 from modules.LDPC_BF import LDPC_BF
+from modules.BPSK import BPSK
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,7 +16,6 @@ decode_max_iter = 20
 samples = 100
 snr_values = np.arange(0, 5.5, 0.5)
 
-
 ### CHANNEL ###
 awgnc = AWGNChannel()
 bsc = BinarySymmetricChannel()
@@ -24,6 +24,9 @@ bsc = BinarySymmetricChannel()
 ldpc_llr = LDPC_LLR.from_csv('ldpc_graph.csv', dv, dc)
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 print(f"LDPC-LLR GRAPH BUILT\n")
+
+### BPSK ###
+bpsk = BPSK()
 
 # ldpc_bf = LDPC_BF.from_csv('ldpc_graph.csv', dv, dc)
 # print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
