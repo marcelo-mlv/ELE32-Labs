@@ -41,9 +41,9 @@ class LDPC_BF:
         M = max((max(cnodes) if cnodes else -1) for cnodes in connections) + 1
 
         # Inicializa sem rodar o random do __init__
-        obj = cls(dv, dc, N=N, init_random=False)
+        obj = cls(N, dv, dc, init_random=False)
         obj.M = M
-        obj.table = np.zeros((M, N, 2))
+        obj.table = np.zeros((M, N))
 
         for v_node, c_nodes in enumerate(connections):
             for c_node in c_nodes:
