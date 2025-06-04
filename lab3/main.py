@@ -4,6 +4,7 @@ from modules.LDPC_BF import LDPC_BF
 from modules.BPSK import BPSK
 from modules.Hamming import Hamming
 
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -47,7 +48,7 @@ for k in range(len(snr_values)):
     Nzero = 1 / snr
 
     # Não tem função Q em numpy
-    Q = lambda x: 0.5 * (1 - np.math.erf(x / np.sqrt(2)))
+    Q = lambda x: 0.5 * (1 - math.erf(x / np.sqrt(2)))
 
     # p = Q(np.sqrt(3*snr)) para AWGN e BPSK (prob. erro simbolo)
     # Usamos o mesmo p para o BSC para comparação justa entre os 4 métodos
