@@ -46,26 +46,37 @@ for k in range(len(snr_values)):
     snr = 10 ** (snr_values[k]/10)
     Nzero = 1 / snr
 
-    # p = Q(raiz(3.snr))
+    # Não tem função Q em numpy
+    Q = lambda x: 0.5 * (1 - np.math.erf(x / np.sqrt(2)))
+
+    # p = Q(np.sqrt(3*snr)) para AWGN e BPSK (prob. erro simbolo)
+    # Usamos o mesmo p para o BSC para comparação justa entre os 4 métodos
+    bsc_p = Q(np.sqrt(3*snr))
 
     ### SAMPLES ###
     num_of_flipped_symbols = 0
     for _ in range(samples):
     
         r_symbols = awgnc.transmit(s_symbols, Nzero)
+        r_bits = bsc.transmit(s_bits, bsc_p)
 
-        # r_bits = bsc.transmit(s_bits, p)
+        llr_decoded_symbols = ldpc_llr.decode(r_symbols, Nzero, decode_max_iter)
+        bpsk_decoded_symbols = bpsk.decode(r_symbols)
 
-        decoded_symbols = ldpc_llr.decode(r_symbols, Nzero, decode_max_iter)
-        # decoded_symbols = bpsk.decode(r_symbols) 
         # decoded_symbols = ldpc_bf.decode(r_bits, bf_max_iter) -- BSC -- qual a relação de p (do BSC) com Eb/N0 (snr)
         # decoded_symbols = hamming.decode(r_bits, ...) -- BSC
 
-        for s in decoded_symbols:
+        for s in llr_decoded_symbols:
             if s == -1:
-                num_of_flipped_symbols += 1
+                llr_num_of_flipped_symbols += 1
 
-    pb_ldpc_llr[k] = num_of_flipped_symbols / (N*samples)
+        for s in bpsk_decoded_symbols:
+            if s == -1:
+                bpsk_num_of_flipped_symbols += 1
+        
+        
+    pb_ldpc_llr[k] = llr_num_of_flipped_symbols / (N*samples)
+    pb_bpsk[k] = bpsk_num_of_flipped_symbols / (N*samples)
     # add
     # add
     # add
