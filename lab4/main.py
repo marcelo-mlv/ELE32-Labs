@@ -7,8 +7,7 @@ from modules.Hamming import Hamming
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-
-Q = lambda x: 0.5 * (1 - math.erf(x / np.sqrt(2)))
+from modules.run_simulation import run_bpsk, run_ldpc_bp, run_ldpc_bf, run_hamming
 
 ### PARAMETERS ###
 
@@ -21,7 +20,7 @@ N = 1001
 decode_max_iter = 20
 
 # plot #
-num_samples = 1000
+num_samples = 1
 snr_values = np.arange(0, 5.5, 0.5)
 
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
@@ -50,64 +49,14 @@ bpsk = BPSK()
 ### HAMMING ###
 hamming = Hamming()
 
-### PLOT ###              
-pb_ldpc_bp = np.zeros(len(snr_values))
-pb_ldpc_bf = np.zeros(len(snr_values))
-pb_bpsk = np.zeros(len(snr_values))
-pb_hamming = np.zeros(len(snr_values))
-
-# INPUT #
 s_symbols = np.full(N, 1, dtype=int)
 s_bits = np.full(N, 0, dtype=int)
 
-for k in range(len(snr_values)):
-
-    snr = 10 ** (snr_values[k]/10)
-
-    ### BPSK ###
-    p = Q(np.sqrt(3*snr))
-    pb_bpsk[k] = p
-
-    ### SAMPLES ###
-    Eb = 1 / rate
-    Nzero = Eb / snr
-    num_errors = {"Hamming": 0, "BF": 0, "BP": 0}
-
-    for _ in range(num_samples):
-    
-        ### TRANSMISSION ###
-        r_symbols = awgnc.transmit(s_symbols, Nzero)
-        r_bits = bsc.transmit(s_bits, p)
-
-        ### LDPC-BP ###
-        bp_decoded_symbols  = ldpc_bp.decode(r_symbols, Nzero, decode_max_iter)
-
-        for s in bp_decoded_symbols:
-            if s == -1:
-                num_errors['BP'] += 1
-
-        ### LDPC-BF ###
-        bf_decoded_bits = ldpc_bf.decode(r_bits, decode_max_iter)
-
-        for bit in bf_decoded_bits:
-            if bit == 1:
-                num_errors['BF'] += 1
-
-        ### Hamming ###
-        for i in range(0, len(r_bits), 7):
-            chunk = r_bits[i:i+7]
-            chunk_decoded_bits = hamming.decode(chunk)
-            for bit in chunk_decoded_bits:
-                if bit == 1:
-                    num_errors['Hamming'] += 1
-        
-    num_total_samples = N * num_samples
-    pb_ldpc_bp[k] = num_errors['BP'] / num_total_samples
-    pb_ldpc_bf[k] = num_errors['BF'] / num_total_samples
-    pb_hamming[k] = num_errors['Hamming'] / num_total_samples        
-
-    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-    print(f"point no. {k+1} / {len(snr_values)}\n")
+### Simulation ###              
+pb_bpsk = run_bpsk(snr_values)
+pb_ldpc_bp = run_ldpc_bp(s_symbols, awgnc, ldpc_bp, snr_values, decode_max_iter, rate, num_samples)
+pb_ldpc_bf = run_ldpc_bf(s_bits, bsc, ldpc_bf, snr_values, decode_max_iter, num_samples)
+pb_hamming = run_hamming(s_bits, bsc, hamming, snr_values, num_samples)
 
 ### OUTPUT - POINTS.TXT ###
 with open("output/points.txt", "w") as file:
