@@ -8,7 +8,12 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+Q = lambda x: 0.5 * (1 - math.erf(x / np.sqrt(2)))
+
 ### PARAMETERS ###
+
+rate = 4/7
+
 # LDPC #
 dv = 3
 dc = 7
@@ -58,23 +63,21 @@ s_bits = np.full(N, 0, dtype=int)
 for k in range(len(snr_values)):
 
     snr = 10 ** (snr_values[k]/10)
-    Nzero = 1 / snr
 
-    # Não tem função Q em numpy
-    Q = lambda x: 0.5 * (1 - math.erf(x / np.sqrt(2)))
-
-    # p = Q(np.sqrt(3*snr)) para AWGN e BPSK (prob. erro simbolo)
-    # Usamos o mesmo p para o BSC para comparação justa entre os 4 métodos
-    bsc_p = Q(np.sqrt(3*snr))
+    ### BPSK ###
+    p = Q(np.sqrt(3*snr))
+    pb_bpsk[k] = p
 
     ### SAMPLES ###
-    num_errors = {"BPSK": 0, "Hamming": 0, "BF": 0, "BP": 0}
+    Eb = 1 / rate
+    Nzero = Eb / snr
+    num_errors = {"Hamming": 0, "BF": 0, "BP": 0}
 
     for _ in range(num_samples):
     
         ### TRANSMISSION ###
         r_symbols = awgnc.transmit(s_symbols, Nzero)
-        r_bits = bsc.transmit(s_bits, bsc_p)
+        r_bits = bsc.transmit(s_bits, p)
 
         ### LDPC-BP ###
         bp_decoded_symbols  = ldpc_bp.decode(r_symbols, Nzero, decode_max_iter)
@@ -82,13 +85,6 @@ for k in range(len(snr_values)):
         for s in bp_decoded_symbols:
             if s == -1:
                 num_errors['BP'] += 1
-
-        ### BPSK ###
-        bpsk_decoded_symbols = bpsk.decode(r_symbols)
-
-        for s in bpsk_decoded_symbols:
-            if s == -1:
-                num_errors['BPSK'] += 1
 
         ### LDPC-BF ###
         bf_decoded_bits = ldpc_bf.decode(r_bits, decode_max_iter)
@@ -107,7 +103,6 @@ for k in range(len(snr_values)):
         
     num_total_samples = N * num_samples
     pb_ldpc_bp[k] = num_errors['BP'] / num_total_samples
-    pb_bpsk[k] = num_errors['BPSK'] / num_total_samples
     pb_ldpc_bf[k] = num_errors['BF'] / num_total_samples
     pb_hamming[k] = num_errors['Hamming'] / num_total_samples        
 
@@ -137,7 +132,7 @@ plt.yscale('log')
 plt.xlabel('snr (dB)')
 plt.ylabel('Pb')
 plt.title("Prob. inversão de bit pós decodificação x relação sinal-ruído")
-plt.grid(True, witch='both', linestyle='--')
+plt.grid(True, which='both', linestyle='--')
 plt.legend(title="Curvas", loc="upper right")
 plt.savefig("output/plot.png", format="png")
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
