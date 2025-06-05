@@ -16,14 +16,14 @@ N = 1001
 decode_max_iter = 20
 
 # plot #
-samples = 1000
+num_samples = 1000
 snr_values = np.arange(0, 5.5, 0.5)
 
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 print(f"dv        = {dv}\n")
 print(f"dc        = {dc}\n")
 print(f"N         = {N}\n")
-print(f"samples   = {samples}\n")
+print(f"samples   = {num_samples}\n")
 
 ### CHANNEL ###
 awgnc = AWGNChannel()
@@ -68,12 +68,9 @@ for k in range(len(snr_values)):
     bsc_p = Q(np.sqrt(3*snr))
 
     ### SAMPLES ###
-    bp_num_of_flipped_symbols = 0
-    bpsk_num_of_flipped_symbols = 0 
-    bf_num_of_flipped_bits = 0 
-    hamming_num_of_flipped_bits = 0
+    num_errors = {"BPSK": 0, "Hamming": 0, "BF": 0, "BP": 0}
 
-    for _ in range(samples):
+    for _ in range(num_samples):
     
         ### TRANSMISSION ###
         r_symbols = awgnc.transmit(s_symbols, Nzero)
@@ -84,21 +81,21 @@ for k in range(len(snr_values)):
 
         for s in bp_decoded_symbols:
             if s == -1:
-                bp_num_of_flipped_symbols += 1
+                num_errors['BP'] += 1
 
         ### BPSK ###
         bpsk_decoded_symbols = bpsk.decode(r_symbols)
 
         for s in bpsk_decoded_symbols:
             if s == -1:
-                bpsk_num_of_flipped_symbols += 1
+                num_errors['BPSK'] += 1
 
         ### LDPC-BF ###
         bf_decoded_bits = ldpc_bf.decode(r_bits, decode_max_iter)
 
         for bit in bf_decoded_bits:
             if bit == 1:
-                bf_num_of_flipped_bits += 1
+                num_errors['BF'] += 1
 
         ### Hamming ###
         for i in range(0, len(r_bits), 7):
@@ -106,13 +103,13 @@ for k in range(len(snr_values)):
             chunk_decoded_bits = hamming.decode(chunk)
             for bit in chunk_decoded_bits:
                 if bit == 1:
-                    hamming_num_of_flipped_bits += 1
+                    num_errors['Hamming'] += 1
         
-        
-    pb_ldpc_bp[k] = bp_num_of_flipped_symbols / (N*samples)
-    pb_bpsk[k] = bpsk_num_of_flipped_symbols / (N*samples)
-    pb_ldpc_bf[k] = bf_num_of_flipped_bits / (N*samples)
-    pb_hamming[k] = hamming_num_of_flipped_bits / (N*samples)        
+    num_total_samples = N * num_samples
+    pb_ldpc_bp[k] = num_errors['BP'] / num_total_samples
+    pb_bpsk[k] = num_errors['BPSK'] / num_total_samples
+    pb_ldpc_bf[k] = num_errors['BF'] / num_total_samples
+    pb_hamming[k] = num_errors['Hamming'] / num_total_samples        
 
     print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
     print(f"point no. {k+1} / {len(snr_values)}\n")
