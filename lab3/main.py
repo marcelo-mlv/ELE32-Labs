@@ -67,7 +67,11 @@ for k in range(len(snr_values)):
     bsc_p = Q(np.sqrt(3*snr))
 
     ### SAMPLES ###
-    num_of_flipped_symbols = 0
+    bp_num_of_flipped_symbols = 0
+    bpsk_num_of_flipped_symbols = 0 
+    bf_num_of_flipped_bits = 0 
+    hamming_num_of_flipped_bits = 0
+
     for _ in range(samples):
     
         ### TRANSMISSION ###
@@ -75,9 +79,8 @@ for k in range(len(snr_values)):
         r_bits = bsc.transmit(s_bits, bsc_p)
 
         ### LDPC-BP ###
-        bp_decoded_symbols  = ldpc_llr.decode(r_symbols, Nzero, decode_max_iter)
+        bp_decoded_symbols  = ldpc_bp.decode(r_symbols, Nzero, decode_max_iter)
 
-        bp_num_of_flipped_symbols = 0
         for s in bp_decoded_symbols:
             if s == -1:
                 bp_num_of_flipped_symbols += 1
@@ -85,7 +88,6 @@ for k in range(len(snr_values)):
         ### BPSK ###
         bpsk_decoded_symbols = bpsk.decode(r_symbols)
 
-        bpsk_num_of_flipped_symbols = 0 
         for s in bpsk_decoded_symbols:
             if s == -1:
                 bpsk_num_of_flipped_symbols += 1
@@ -93,13 +95,11 @@ for k in range(len(snr_values)):
         ### LDPC-BF ###
         bf_decoded_bits = ldpc_bf.decode(r_bits, decode_max_iter)
 
-        bf_num_of_flipped_bits = 0 
         for s in bf_decoded_bits:
             if s == 1:
                 bf_num_of_flipped_bits += 1
 
         ### Hamming ###
-        hamming_num_of_flipped_bits = 0
         for i in range(0, len(r_bits), 7):
             chunk = r_bits[i:i+7]
             chunk_decoded_bits = hamming.decode(chunk)
