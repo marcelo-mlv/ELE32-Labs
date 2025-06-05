@@ -3,6 +3,8 @@ import random
 import os
 import csv  
 
+ # decode: Bit Flipping
+
 class LDPC_BF:
 
     def __init__(self, N, dv, dc, init_random=True):
@@ -62,7 +64,6 @@ class LDPC_BF:
         self.vnodes_fails = np.zeros(self.N, dtype=int)
 
     def decode(Graph, y, max_iter=20):
-        # bit_flipping
         for _ in range(max_iter):
             for m in range(Graph.M):
                 Graph.check_node(m, y)
@@ -71,7 +72,7 @@ class LDPC_BF:
             if max_fails == 0:
                 return y
             else:
-                y[max_fails_idx] = (y[max_fails_idx] + 1) % 2   # bit flip, fliping only one bit 
+                y[max_fails_idx] = (y[max_fails_idx] + 1) % 2   # bit flip, flipping only one bit 
             Graph.reset_fails()
 
         return y

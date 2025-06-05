@@ -1,5 +1,5 @@
 from modules.Channel import AWGNChannel, BinarySymmetricChannel
-from modules.LDPC_LLR import LDPC_LLR
+from modules.LDPC_BP import LDPC_BP
 from modules.LDPC_BF import LDPC_BF
 from modules.BPSK import BPSK
 from modules.Hamming import Hamming
@@ -14,24 +14,25 @@ dv = 3
 dc = 7
 N = 1001
 decode_max_iter = 20
-print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-print(f"dv        = {dv}\n")
-print(f"dc        = {dc}\n")
-print(f"N         = {N}\n")
-print(f"samples   = {N}\n")
 
 # plot #
 samples = 1000
 snr_values = np.arange(0, 5.5, 0.5)
+
+print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+print(f"dv        = {dv}\n")
+print(f"dc        = {dc}\n")
+print(f"N         = {N}\n")
+print(f"samples   = {samples}\n")
 
 ### CHANNEL ###
 awgnc = AWGNChannel()
 bsc = BinarySymmetricChannel()
 
 ### LDPC-BP ###
-ldpc_bp = LDPC_LLR.from_csv('ldpc_graph.csv', dv, dc)
+ldpc_bp = LDPC_BP.from_csv('ldpc_graph.csv', dv, dc)
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
-print(f"LDPC-LLR GRAPH BUILT\n")
+print(f"LDPC-BP GRAPH BUILT\n")
 
 ## LDPC-BF ###
 ldpc_bf = LDPC_BF.from_csv('ldpc_graph.csv', dv, dc)
@@ -95,8 +96,8 @@ for k in range(len(snr_values)):
         ### LDPC-BF ###
         bf_decoded_bits = ldpc_bf.decode(r_bits, decode_max_iter)
 
-        for s in bf_decoded_bits:
-            if s == 1:
+        for bit in bf_decoded_bits:
+            if bit == 1:
                 bf_num_of_flipped_bits += 1
 
         ### Hamming ###
@@ -122,24 +123,24 @@ with open("output/points.txt", "w") as file:
         file.write(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
         file.write(f"point no. {k+1}\n")
         file.write(f"snr: {snr_values[k]}\n")
-        file.write(f"pb  LDPC-BP: {pb_ldpc_bp[k]}\n")
-        file.write(f"pb     BPSK: {pb_bpsk[k]}\n")
+        file.write(f"pb  BPSK não codificado: {pb_bpsk[k]}\n")
         file.write(f"pb  LDPC-BF: {pb_ldpc_bf[k]}\n")
         file.write(f"pb  Hamming: {pb_hamming[k]}\n")
+        file.write(f"pb  LDPC-BP: {pb_ldpc_bp[k]}\n")
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
 print(f"points.txt [OK]\n")
 
-### OUTPUT - POINTS.TXT ###
+### OUTPUT - PLOT.PNG ###
 plt.figure()
-plt.plot(snr_values, pb_ldpc_bp, label='LDPC-BP', color='blue')
+plt.plot(snr_values, pb_bpsk, label='BPSK não codificado', color='green')
 plt.plot(snr_values, pb_ldpc_bf, label='LDPC-BF', color='orange')
-plt.plot(snr_values, pb_bpsk, label='BPSK', color='green')
 plt.plot(snr_values, pb_hamming, label='Hamming', color='red')
+plt.plot(snr_values, pb_ldpc_bp, label='LDPC-BP', color='blue')
 plt.yscale('log')
 plt.xlabel('snr (dB)')
 plt.ylabel('Pb')
 plt.title("Prob. inversão de bit pós decodificação x relação sinal-ruído")
-plt.grid(True)
+plt.grid(True, witch='both', linestyle='--')
 plt.legend(title="Curvas", loc="upper right")
 plt.savefig("output/plot.png", format="png")
 print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")

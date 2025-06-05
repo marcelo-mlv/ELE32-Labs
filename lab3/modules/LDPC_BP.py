@@ -3,10 +3,12 @@ import random
 import os
 import csv   
 
+ # decode: Belief Propagation
+
 CONNECTED = 0
 MESSAGE = 1
 
-class LDPC_LLR:
+class LDPC_BP:
 
     def __init__(self, dv, dc, N, init_random=True):
         
@@ -62,7 +64,6 @@ class LDPC_LLR:
                 connected_cnodes = np.where(self.table[:, n, CONNECTED] == 1)[0]
                 writer.writerow(connected_cnodes + 1)    # i = 1,...,M
     
-    # decode
     
     def decode(self, channel_input, Nzero, max_iter=20):
 
