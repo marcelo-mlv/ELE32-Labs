@@ -32,6 +32,10 @@ for idx, snr_db in enumerate(snr_values):
     pb_ldpc_bf.append(bf_flipped_symbols / (num_samples * len(s_bits)))
     pb_hamming.append(hm_flipped_symbols / (num_samples * len(s_bits)))
 
+    print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
+    print(f"Simulation completed for SNR = {[snr for snr in snr_values[0:idx+1]]}\n")
+    print(f"SNR values left: {[snr for snr in snr_values[idx:-1]]}\n")
+    print(f"Simulation {int(100*(idx+1)/len(snr_values))}% complete\n")
 
 ### Output ###
 out_txt(snr_values, pb_bpsk, pb_ldpc_bf, pb_hamming, pb_ldpc_bp)
