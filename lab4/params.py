@@ -5,6 +5,10 @@ from modules.BPSK import BPSK
 from modules.Hamming import Hamming
 
 import numpy as np
+import math
+
+### CONSTANTS ###
+Q = lambda x: 0.5 * (1 - math.erf(x / np.sqrt(2)))
 
 ### PARAMETERS ###
 rate = 4/7
@@ -15,7 +19,7 @@ dc = 7
 N = 1001
 decode_max_iter = 20
 
-# plot #
+# simulation #
 num_samples = 1
 snr_values = np.arange(0, 5.5, 0.5)
 

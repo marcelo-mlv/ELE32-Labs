@@ -1,7 +1,7 @@
 from output import out_plot, out_txt
 from modules.run_simulation import run_bpsk, run_ldpc_bp, run_ldpc_bf, run_hamming
 from params import rate, decode_max_iter, num_samples, snr_values, \
-awgnc, bsc, ldpc_bp, ldpc_bf, hamming, s_bits, s_symbols
+awgnc, bsc, ldpc_bp, ldpc_bf, hamming, s_bits, s_symbols, Q
 
 import math
 import numpy as np
@@ -10,7 +10,6 @@ pb_bpsk = []
 pb_ldpc_bp = []
 pb_ldpc_bf = []
 pb_hamming = []
-Q = lambda x: 0.5 * (1 - math.erf(x / np.sqrt(2)))
 
 ### Simulation ###
 for idx, snr_db in enumerate(snr_values):
