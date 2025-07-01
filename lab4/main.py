@@ -1,5 +1,5 @@
 from output import out_plot, out_txt
-from modules.run_simulation import run_bpsk, run_ldpc_bp, run_ldpc_bf, run_hamming
+from modules.run_simulation import run_bpsk, run_ldpc_bp, run_ldpc_bf, run_hamming, find_operational_ebn0, theoretical_ebn0_min
 from params import rate, decode_max_iter, num_samples, snr_values, \
 awgnc, bsc, ldpc_bp, ldpc_bf, hamming, s_bits, s_symbols, Q
 
@@ -39,3 +39,29 @@ for idx, snr_db in enumerate(snr_values):
 ### Output ###
 out_txt(snr_values, pb_bpsk, pb_ldpc_bf, pb_hamming, pb_ldpc_bp)
 out_plot(snr_values, pb_bpsk, pb_ldpc_bf, pb_hamming, pb_ldpc_bp, show=True)
+
+# Operatoinal Eb/N0
+op_bpsk = find_operational_ebn0(snr_values, pb_bpsk)
+op_ldpc_bp = find_operational_ebn0(snr_values, pb_ldpc_bp)
+op_ldpc_bf = find_operational_ebn0(snr_values, pb_ldpc_bf)
+op_hamming = find_operational_ebn0(snr_values, pb_hamming)
+
+print("\n========= Operational Eb/N0 for Pb <= 1e-4 (dB) =========")
+print(f"BPSK theoretical:  {op_bpsk if op_bpsk is not None else 'Not reached target'} dB")
+print(f"LDPC-BP (LLR):     {op_ldpc_bp if op_ldpc_bp is not None else 'Not reached target'} dB")
+print(f"LDPC-BF:           {op_ldpc_bf if op_ldpc_bf is not None else 'Not reached target'} dB")
+print(f"Hamming:           {op_hamming if op_hamming is not None else 'Not reached target'} dB")
+print("============================================================\n")
+
+# Theoretical minimum Eb/N0
+op_bpsk = theoretical_ebn0_min(rate)
+op_ldpc_bp = theoretical_ebn0_min(ldpc_bp.rate)
+op_ldpc_bf = theoretical_ebn0_min(ldpc_bf.rate)
+op_hamming = theoretical_ebn0_min(hamming.rate)
+
+print("\n========= Min Eb/N0 (dB) =========")
+print(f"BPSK theoretical:  {op_bpsk if op_bpsk is not None else 'Not reached target'} dB")
+print(f"LDPC-BP (LLR):     {op_ldpc_bp if op_ldpc_bp is not None else 'Not reached target'} dB")
+print(f"LDPC-BF:           {op_ldpc_bf if op_ldpc_bf is not None else 'Not reached target'} dB")
+print(f"Hamming:           {op_hamming if op_hamming is not None else 'Not reached target'} dB")
+print("============================================================\n")
