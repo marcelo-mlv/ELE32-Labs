@@ -10,6 +10,7 @@ N = 1001
 # dc = 8
 # N = 1000   
 
+
 graph = LDPC_BP(dv, dc, N)
 
 # OUTPUT - .CSV #
