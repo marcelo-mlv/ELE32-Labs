@@ -46,7 +46,7 @@ op_ldpc_bp = find_operational_ebn0(snr_values, pb_ldpc_bp)
 op_ldpc_bf = find_operational_ebn0(snr_values, pb_ldpc_bf)
 op_hamming = find_operational_ebn0(snr_values, pb_hamming)
 
-print("\n========= Operational Eb/N0 for Pb <= 1e-4 (dB) =========")
+print("\n=========== Operational Eb/N0 for Pb <= 1e-4 (dB) ===========")
 print(f"BPSK theoretical:  {op_bpsk if op_bpsk is not None else 'Not reached target'} dB")
 print(f"LDPC-BP (LLR):     {op_ldpc_bp if op_ldpc_bp is not None else 'Not reached target'} dB")
 print(f"LDPC-BF:           {op_ldpc_bf if op_ldpc_bf is not None else 'Not reached target'} dB")
@@ -54,14 +54,18 @@ print(f"Hamming:           {op_hamming if op_hamming is not None else 'Not reach
 print("============================================================\n")
 
 # Theoretical minimum Eb/N0
-op_bpsk = theoretical_ebn0_min(rate)
-op_ldpc_bp = theoretical_ebn0_min(ldpc_bp.rate)
-op_ldpc_bf = theoretical_ebn0_min(ldpc_bf.rate)
-op_hamming = theoretical_ebn0_min(hamming.rate)
+minimum_ebn0 = theoretical_ebn0_min(rate)
 
-print("\n========= Min Eb/N0 (dB) =========")
-print(f"BPSK theoretical:  {op_bpsk if op_bpsk is not None else 'Not reached target'} dB")
-print(f"LDPC-BP (LLR):     {op_ldpc_bp if op_ldpc_bp is not None else 'Not reached target'} dB")
-print(f"LDPC-BF:           {op_ldpc_bf if op_ldpc_bf is not None else 'Not reached target'} dB")
-print(f"Hamming:           {op_hamming if op_hamming is not None else 'Not reached target'} dB")
+print("\n====================== Min Eb/N0 (dB) ======================")
+print(f"Operational E:  {minimum_ebn0 if minimum_ebn0 is not None else 'Not reached target'} dB")
+print("It's the same for all cases")
+print("============================================================\n")
+
+# Gap Between operational and theoretical min Eb/N0
+
+print("\n==== Gap Between operational and theoretical min Eb/N0 =====")
+print(f"BPSK theoretical:  {op_bpsk - minimum_ebn0 if op_bpsk or minimum_ebn0 is not None else 'Not reached target'} dB")
+print(f"LDPC-BP (LLR):     {op_ldpc_bp - minimum_ebn0 if op_ldpc_bp or minimum_ebn0 is not None else 'Not reached target'} dB")
+print(f"LDPC-BF:           {op_ldpc_bf - minimum_ebn0 if op_ldpc_bf or minimum_ebn0 is not None else 'Not reached target'} dB")
+print(f"Hamming:           {op_hamming - minimum_ebn0 if op_hamming or minimum_ebn0 is not None else 'Not reached target'} dB")
 print("============================================================\n")
