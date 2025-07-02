@@ -57,8 +57,8 @@ print("============================================================\n")
 minimum_ebn0 = theoretical_ebn0_min(rate)
 
 print("\n====================== Min Eb/N0 (dB) ======================")
-print(f"Operational E:  {minimum_ebn0 if minimum_ebn0 is not None else 'Not reached target'} dB")
-print("It's the same for all cases")
+print(f"Theoretical minimum Eb/N0:  {minimum_ebn0 if minimum_ebn0 is not None else 'Not reached target'} dB")
+print("(It's the same for all cases)")
 print("============================================================\n")
 
 # Gap Between operational and theoretical min Eb/N0
