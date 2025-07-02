@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
-def out_txt(snr_values, pb_bpsk, pb_ldpc_bf, pb_hamming, pb_ldpc_bp):
+def out_txt(snr_values, pb_bpsk, pb_ldpc_bf, pb_hamming, pb_ldpc_bp, pb_ldpc_bp_2):
     with open("output/points.txt", "w") as file:
         for k in range(len(snr_values)):
             file.write(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
@@ -10,19 +11,21 @@ def out_txt(snr_values, pb_bpsk, pb_ldpc_bf, pb_hamming, pb_ldpc_bp):
             file.write(f"pb  LDPC-BF: {pb_ldpc_bf[k]}\n")
             file.write(f"pb  Hamming: {pb_hamming[k]}\n")
             file.write(f"pb  LDPC-BP: {pb_ldpc_bp[k]}\n")
+            file.write(f"pb  LDPC-BP-2: {pb_ldpc_bp_2[k]}\n")
     print(f"=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n")
     print(f"points.txt [OK]\n")
 
-def out_plot(snr_values, pb_bpsk, pb_ldpc_bf, pb_hamming, pb_ldpc_bp, show):
+def out_plot(Et_N0_values, pb_sem_cod, pb_ldpc_bf, pb_hamming, pb_ldpc_bp, pb_ldpc_bp_2, show):
     plt.figure()
-    plt.plot(snr_values, pb_bpsk, label='BPSK não codificado', color='green')
-    plt.plot(snr_values, pb_ldpc_bf, label='LDPC-BF', color='orange')
-    plt.plot(snr_values, pb_hamming, label='Hamming', color='red')
-    plt.plot(snr_values, pb_ldpc_bp, label='LDPC-BP', color='blue')
+    plt.plot(Et_N0_values + 3, pb_sem_cod, label='BPSK não codificado', color='green')
+    plt.plot(Et_N0_values - 10*np.log10(4/7), pb_hamming, label='Hamming (4/7)', color='red')
+    plt.plot(Et_N0_values - 10*np.log10(4/7), pb_ldpc_bf, label='LDPC-BF (4/7)', color='orange')
+    plt.plot(Et_N0_values - 10*np.log10(4/7), pb_ldpc_bp, label='LDPC-BP (4/7)', color='blue')
+    plt.plot(Et_N0_values - 10*np.log10(1/2), pb_ldpc_bp_2, label='LDPC-BP (1/2)')
     plt.yscale('log')
-    plt.xlabel('snr (dB)')
+    plt.xlabel('Eb/N0 (dB)')
     plt.ylabel('Pb')
-    plt.title("Prob. inversão de bit pós decodificação x relação sinal-ruído")
+    plt.title("Probabilidade de Erro de Bit de Informação x Eb/N0")
     plt.grid(True, which='both', linestyle='--')
     plt.legend(title="Curvas", loc="upper right")
     plt.savefig("output/plot.png", format="png")

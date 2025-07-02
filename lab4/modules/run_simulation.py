@@ -1,10 +1,10 @@
 import numpy as np
 import math
 
-Q = lambda x: 0.5 * (1 - math.erf(x / np.sqrt(2)))
+Q = lambda x: 0.5 * np.exp(- (x ** 2) / 2)
 
-def run_bpsk(snr):
-    return Q(math.sqrt(3*snr))
+def run_bpsk(Eb_N0):
+    return Q(math.sqrt(2*Eb_N0))
 
 def run_ldpc_bp(s_symbols, channel, ldpc_bp, Nzero, decode_max_iter):
     r_symbols = channel.transmit(s_symbols, Nzero)
